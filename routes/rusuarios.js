@@ -4,11 +4,6 @@ module.exports = function(app, swig, gestorBD) {
         res.send(respuesta);
     });
 
-    app.get("/home", function(req, res) {
-        let respuesta = swig.renderFile('views/home.html',{});
-        res.send(respuesta);
-    });
-
     app.get("/registrarse", function(req, res) {
         let respuesta = swig.renderFile('views/bregistro.html', {});
         res.send(respuesta);
@@ -31,13 +26,15 @@ module.exports = function(app, swig, gestorBD) {
             email : req.body.email,
             name : req.body.name,
             surname : req.body.surname,
-            password : seguro
+            password : seguro,
+            rol : "USUARIO"
         };
         gestorBD.insertarUsuario(usuario, function(id) {
             if (id == null){
                 res.redirect("/usuario");
             } else {
-                res.redirect("/");
+                req.session.usuario = usuario;
+                res.redirect("/home");
             }
         });
     });
@@ -54,14 +51,11 @@ module.exports = function(app, swig, gestorBD) {
                 req.session.usuario = null;
                 res.redirect("/identificarse");
             } else {
-                req.session.usuario = usuarios[0].nombre;
+                req.session.usuario = usuarios[0];
                 res.redirect("/home");
             }
         });
     });
 
-    app.get('/desconectarse', function (req, res) {
-        req.session.usuario = null;
-        res.redirect("/");
-    })
+
 };

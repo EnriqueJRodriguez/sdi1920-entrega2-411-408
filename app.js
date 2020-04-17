@@ -15,6 +15,14 @@ app.use(expressSession({
     saveUninitialized: true
 }));
 
+const log4js = require('log4js');
+log4js.configure({
+    appenders: { logger: { type: 'file', filename: 'logger.log' } },
+    categories: { default: { appenders: ['logger'], level: 'info' } }
+});
+
+const logger = log4js.getLogger('logger');
+
 let swig = require('swig');
 let bodyParser = require('body-parser');
 app.use(bodyParser.json());
@@ -40,7 +48,7 @@ routerUsuarioSession.use(function(req, res, next) {
         // dejamos correr la petición
         next();
     } else {
-        console.log("va a : "+req.session.destino)
+        console.log("va a : "+ req.session.destino)
         res.redirect("/identificarse");
     }
 });
@@ -50,6 +58,15 @@ app.use("/desconectarse",routerUsuarioSession);
 app.use("/home",routerUsuarioSession);
 
 app.use(express.static('public'));
+
+app.get('/desconectarse', function (req, res) {
+    req.session.usuario = null;
+    res.redirect("/");
+});
+app.get("/home", function(req, res) {
+    let respuesta = swig.renderFile('views/home.html',{usuario: req.session.usuario});
+    res.send(respuesta);
+});
 
 
 // lanzar el servidor

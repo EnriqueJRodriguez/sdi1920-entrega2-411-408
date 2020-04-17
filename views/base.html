@@ -26,6 +26,7 @@
             <ul class="nav navbar-nav">
                 <li><a href="/">Inicio</a></li>
             </ul>
+            {% if usuario.rol=="ADMINISTRADOR" || usuario.rol=="USUARIO" %}
             <ul class="nav navbar-nav">
                 <li><a href="/home">Portal</a></li>
             </ul>
@@ -58,16 +59,21 @@
                     </ul>
                 </li>
             </ul>
+            {% endif %}
             <ul class="nav navbar-nav navbar-right">
+                {% if usuario.rol !="ADMINISTRADOR" || usuario.rol!="USUARIO" %}
                 <li><a href="/registrarse">Regístrate<span
                         class="glyphicon glyphicon-user"> </span>
                 </a></li>
                 <li><a href="/identificarse">Identifícate<span
                         class="glyphicon glyphicon-log-in"> </span>
                 </a></li>
+                {% endif %}
+                {% if usuario.rol =="ADMINISTRADOR" || usuario.rol=="USUARIO" %}
                 <li><a href="/desconectarse">Desconectarse<span
                         class="glyphicon glyphicon-log-out"></span>
                 </a></li>
+                {% endif %}
             </ul>
         </div>
     </div>

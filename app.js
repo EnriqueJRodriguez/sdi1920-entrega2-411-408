@@ -68,6 +68,10 @@ app.get("/home", function(req, res) {
     res.send(respuesta);
 });
 
+app.get("/", function(req, res) {
+    let respuesta = swig.renderFile('views/index.html',{usuario: req.session.usuario});
+    res.send(respuesta);
+});
 
 // lanzar el servidor
 app.listen(app.get('port'), function() {

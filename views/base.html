@@ -61,7 +61,7 @@
             </ul>
             {% endif %}
             <ul class="nav navbar-nav navbar-right">
-                {% if usuario.rol !="ADMINISTRADOR" || usuario.rol!="USUARIO" %}
+                {% if usuario == null %}
                 <li><a href="/registrarse">Regístrate<span
                         class="glyphicon glyphicon-user"> </span>
                 </a></li>

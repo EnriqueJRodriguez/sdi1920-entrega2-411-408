@@ -57,5 +57,35 @@ module.exports = function(app, swig, gestorBD) {
         });
     });
 
+    app.get("/user/list", function (req, res) {
+        let criterio = {};
+        if( req.query.busqueda != null ){
+            criterio = {
+                '_id': {$not: {$eq: gestorBD.mongo.ObjectID(req.session.usuario._id)}},
+                $or:[
+                    {'name': new RegExp(req.query.busqueda + "+", 'i')},
+                    {'surname': new RegExp(req.query.busqueda + "+", 'i')},
+                    {'email': new RegExp(req.query.busqueda + "+", 'i')},
+                ],
+                'rol': {$not: {$eq: "ADMINISTRADOR"}}
+            };
+        }else {
+            criterio = {
+                '_id': {$not: {$eq: gestorBD.mongo.ObjectID(req.session.usuario._id)}},
+                'rol': {$not: {$eq: "ADMINISTRADOR"}}
+            };
+        }
+        console.log(criterio);
+        gestorBD.obtenerUsuarios(criterio, function (usuarios) {
+            if (usuarios == null ){
+                // ERROR a lanzar;
+                return;
+            } else {
+                console.log(usuarios);
+                let respuesta = swig.renderFile('views/buserlist.html', {usuario: req.session.usuario, usuarios: usuarios});
+                res.send(respuesta);
+            }
+        })
+    });
 
 };

@@ -56,6 +56,7 @@ routerUsuarioSession.use(function(req, res, next) {
 //Aplicar routerUsuarioSession
 app.use("/desconectarse",routerUsuarioSession);
 app.use("/home",routerUsuarioSession);
+app.use("/user/list",routerUsuarioSession);
 
 app.use(express.static('public'));
 

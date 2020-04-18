@@ -22,3 +22,7 @@ footer {
 }
 
 /* Sticky footer styles-------------------------------------------------- */
+
+th{
+  text-align: center;
+}

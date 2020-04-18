@@ -37,9 +37,17 @@
                 <td>{{ u.surname }}</td>
                 <td>{{ u.email }}</td>
                 <td>
+                    {% if u.status == "friend" %}
+                        Este usuario ya es su amigo
+                    {% endif %}
+                    {% if u.status == "invited" %}
+                        Petición de amistad pendiente de aprovación
+                    {% endif %}
+                    {% if u.status == "unknown" %}
                     <form method="get" action="/invitations/add/{{u._id.toString()}}">
                         <button type="submit" class="btn btn-info">Agregar Amigo</button>
                     </form>
+                    {% endif %}
                 </td>
             </tr>
             {% endfor %}

@@ -29,7 +29,9 @@ module.exports = function(app, swig, gestorBD) {
             name : req.body.name,
             surname : req.body.surname,
             password : seguro,
-            rol : "USUARIO"
+            rol : "USUARIO",
+            friends : [],
+            invites : [],
         };
         comprobarEmailSinUso(req.body.email,function (usable) {
             if(usable){
@@ -106,13 +108,18 @@ module.exports = function(app, swig, gestorBD) {
                         paginas.push(i);
                     }
                 }
-                let respuesta = swig.renderFile('views/buserlist.html', {
-                    usuario: req.session.usuario,
-                    usuarios: usuarios,
-                    paginas : paginas,
-                    actual : pg
-                });
-                res.send(respuesta);
+                if(calculateOtherUserStatusesWithCurrentUser(usuarios,req.session.usuario)) {
+                    let respuesta = swig.renderFile('views/buserlist.html', {
+                        usuario: req.session.usuario,
+                        usuarios: usuarios,
+                        paginas: paginas,
+                        actual: pg
+                    });
+                    res.send(respuesta);
+                } else{
+                    res.redirect("/home"+ "?mensaje=Ha ocurrido un problema al mostar los usuarios de la red social"+
+                        "&tipoMensaje=alert-danger ");
+                }
             }
         });
     });
@@ -133,5 +140,28 @@ module.exports = function(app, swig, gestorBD) {
                 }
             })
         }
+    }
+
+    function calculateOtherUserStatusesWithCurrentUser(usuarios, usuario){
+        if(usuarios == null || usuario == null){
+            return false;
+        }
+        let estadoNoActualizado = true;
+        for(i=0; i<usuarios.length; i++){
+           if(usuario.invites.includes(usuarios[i]._id.toString()) || usuarios[i].invites.includes(usuario._id.toString())){
+               usuarios[i].status = "invited";
+               estadoNoActualizado = false;
+           }
+           if(usuario.friends.includes(usuarios[i]._id.toString()) || usuarios[i].friends.includes(usuario._id.toString())){
+               usuarios[i].status = "friend";
+               estadoNoActualizado = false;
+           }
+           if(estadoNoActualizado){
+               usuarios[i].status = "unknown";
+               estadoNoActualizado = false;
+           }
+           estadoNoActualizado = true;
+        }
+        return true;
     }
 };

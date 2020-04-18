@@ -17,7 +17,9 @@ module.exports = function(app, swig, gestorBD) {
     app.post('/usuario', function(req, res) {
         if(req.body.password != req.body.repassword){
             // TEMPORAL MAS TARDE LANZAR ERROR
-            res.redirect("/registrarse");
+            res.redirect("/registrarse" +
+                "?mensaje=Las contraseñas no coinciden"+
+                "&tipoMensaje=alert-danger ");
             return;
         }
         let seguro = app.get("crypto").createHmac('sha256', app.get('clave'))
@@ -29,14 +31,23 @@ module.exports = function(app, swig, gestorBD) {
             password : seguro,
             rol : "USUARIO"
         };
-        gestorBD.insertarUsuario(usuario, function(id) {
-            if (id == null){
-                res.redirect("/usuario");
-            } else {
-                req.session.usuario = usuario;
-                res.redirect("/home");
+        comprobarEmailSinUso(req.body.email,function (usable) {
+            if(usable){
+                gestorBD.insertarUsuario(usuario, function(id) {
+                    if (id == null){
+                        res.redirect("/registrarse"+ "?mensaje=Ha ocurrido un problema al insertar usuario"+
+                            "&tipoMensaje=alert-danger ");
+                    } else {
+                        req.session.usuario = usuario;
+                        res.redirect("/home");
+                    }
+                });
+            }else{
+                res.redirect("/registrarse"+ "?mensaje=Email ya en uso por el sistema"+
+                    "&tipoMensaje=alert-danger ");
             }
-        });
+        })
+
     });
 
     app.post("/identificarse", function(req, res) {
@@ -45,11 +56,12 @@ module.exports = function(app, swig, gestorBD) {
         let criterio = {
             email : req.body.email,
             password : seguro
-        }
+        };
         gestorBD.obtenerUsuarios(criterio, function(usuarios) {
             if (usuarios == null || usuarios.length == 0) {
                 req.session.usuario = null;
-                res.redirect("/identificarse");
+                res.redirect("/identificarse" +"?mensaje=Usuario o contraseñas incorrectos"+
+                    "&tipoMensaje=alert-danger ");
             } else {
                 req.session.usuario = usuarios[0];
                 res.redirect("/home");
@@ -58,7 +70,7 @@ module.exports = function(app, swig, gestorBD) {
     });
 
     app.get("/user/list", function (req, res) {
-        let criterio = {};
+        let criterio;
         if( req.query.busqueda != null ){
             criterio = {
                 '_id': {$not: {$eq: gestorBD.mongo.ObjectID(req.session.usuario._id)}},
@@ -75,17 +87,32 @@ module.exports = function(app, swig, gestorBD) {
                 'rol': {$not: {$eq: "ADMINISTRADOR"}}
             };
         }
-        console.log(criterio);
         gestorBD.obtenerUsuarios(criterio, function (usuarios) {
             if (usuarios == null ){
-                // ERROR a lanzar;
-                return;
+                res.redirect("/home"+ "?mensaje=Ha ocurrido un problema al mostar los usuarios de la red social"+
+                    "&tipoMensaje=alert-danger ");
             } else {
-                console.log(usuarios);
                 let respuesta = swig.renderFile('views/buserlist.html', {usuario: req.session.usuario, usuarios: usuarios});
                 res.send(respuesta);
             }
         })
     });
 
+    function comprobarEmailSinUso(email,functionCallback){
+        if(email == null){
+            res.redirect("/registrarse"+ "?mensaje=Ha ocurrido un problema al insertar usuario: Email no valido"+
+                "&tipoMensaje=alert-danger ");
+        } else{
+            let criterio = {
+                email : email
+            };
+            gestorBD.obtenerUsuarios(criterio, function (usuarios) {
+                if(usuarios == null || usuarios.length > 0){
+                    functionCallback(false);
+                } else{
+                    functionCallback(true);
+                }
+            })
+        }
+    }
 };

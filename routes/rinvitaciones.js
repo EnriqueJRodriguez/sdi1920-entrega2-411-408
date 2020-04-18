@@ -60,6 +60,8 @@ module.exports = function(app, swig, gestorBD) {
                 res.redirect("/home"+ "?mensaje=Ha ocurrido un problema al mostar sus invitaciones de amistad"+
                     "&tipoMensaje=alert-danger ");
             } else {
+                usuarios = calcularInvitacionesUsuario(usuarios,req.session.usuario);
+                total = usuarios.length;
                 let ultimaPg = total/5;
                 if (total % 5 > 0 ){ // Sobran decimales
                     ultimaPg = ultimaPg+1;
@@ -70,7 +72,6 @@ module.exports = function(app, swig, gestorBD) {
                         paginas.push(i);
                     }
                 }
-                usuarios = calcularInvitacionesUsuario(usuarios,req.session.usuario);
                 if(usuarios != null) {
                     let respuesta = swig.renderFile('views/binvitationslist.html', {
                         usuario: req.session.usuario,

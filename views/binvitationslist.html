@@ -2,7 +2,7 @@
 {% block titulo %} Inicio - Red Social {% endblock %}
 {% block contenido_principal %}
 <div class="container" style="text-align: center">
-    <h1>Usuarios de la Red Social</h1>
+    <h1>Invitaciones de amistad</h1>
     <!-- Busqueda -->
     <div class="row">
         <div id="custom-search-input ">
@@ -23,12 +23,12 @@
     <div class="table-responsive">
         <table class="table table-hover">
             <thead>
-                <tr>
-                    <th>Nombre</th>
-                    <th>Apellidos</th>
-                    <th>Email</th>
-                    <th></th>
-                </tr>
+            <tr>
+                <th>Nombre</th>
+                <th>Apellidos</th>
+                <th>Email</th>
+                <th></th>
+            </tr>
             </thead>
             <tbody>
             {% for u in usuarios %}
@@ -37,17 +37,9 @@
                 <td>{{ u.surname }}</td>
                 <td>{{ u.email }}</td>
                 <td>
-                    {% if u.status == "friend" %}
-                        Este usuario ya es su amigo
-                    {% endif %}
-                    {% if u.status == "invited" %}
-                        Petición de amistad pendiente de aprobación
-                    {% endif %}
-                    {% if u.status == "unknown" %}
-                    <form method="get" action="/invitations/add/{{u._id.toString()}}">
-                        <button type="submit" class="btn btn-info">Agregar Amigo</button>
+                    <form method="get" action="/friends/add/{{u._id.toString()}}">
+                        <button type="submit" class="btn btn-info">Aceptar</button>
                     </form>
-                    {% endif %}
                 </td>
             </tr>
             {% endfor %}

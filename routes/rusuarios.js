@@ -87,15 +87,34 @@ module.exports = function(app, swig, gestorBD) {
                 'rol': {$not: {$eq: "ADMINISTRADOR"}}
             };
         }
-        gestorBD.obtenerUsuarios(criterio, function (usuarios) {
-            if (usuarios == null ){
+        let pg = parseInt(req.query.pg); // Es String !!!
+        if ( req.query.pg == null){ // Puede no venir el param
+            pg = 1;
+        }
+        gestorBD.obtenerUsuariosPg(criterio, pg , function(usuarios, total ) {
+            if (usuarios == null) {
                 res.redirect("/home"+ "?mensaje=Ha ocurrido un problema al mostar los usuarios de la red social"+
                     "&tipoMensaje=alert-danger ");
             } else {
-                let respuesta = swig.renderFile('views/buserlist.html', {usuario: req.session.usuario, usuarios: usuarios});
+                let ultimaPg = total/5;
+                if (total % 5 > 0 ){ // Sobran decimales
+                    ultimaPg = ultimaPg+1;
+                }
+                let paginas = []; // paginas mostrar
+                for(let i = pg-2 ; i <= pg+2 ; i++){
+                    if ( i > 0 && i <= ultimaPg){
+                        paginas.push(i);
+                    }
+                }
+                let respuesta = swig.renderFile('views/buserlist.html', {
+                    usuario: req.session.usuario,
+                    usuarios: usuarios,
+                    paginas : paginas,
+                    actual : pg
+                });
                 res.send(respuesta);
             }
-        })
+        });
     });
 
     function comprobarEmailSinUso(email,functionCallback){

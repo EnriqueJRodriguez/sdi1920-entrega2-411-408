@@ -46,5 +46,19 @@
             </tbody>
         </table>
     </div>
+
+    <!-- Paginación mostrar la actual y 2 anteriores y 2 siguientes -->
+    <div class="row text-center">
+        <ul class="pagination">
+            {% for pagina in paginas %}
+            <li class="page-item" id="pi-{{ pagina }}">
+                <a class="page-link" href="/user/list?pg={{pagina}}">{{pagina}}</a>
+            </li>
+            {% endfor %}
+            <script>
+                $("#pi-" + "{{ actual }}").addClass("active");
+            </script>
+        </ul>
+    </div>
 </div>
 {% endblock %}

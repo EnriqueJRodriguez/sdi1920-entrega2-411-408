@@ -40,6 +40,7 @@ app.set('crypto',crypto);
 //Rutas/controladores por lógica
 require("./routes/rusuarios.js")(app,swig, gestorBD); // (app, param1, param2, etc.)
 require("./routes/rinvitaciones.js")(app,swig, gestorBD); // (app, param1, param2, etc.)
+require("./routes/ramigos.js")(app,swig, gestorBD); // (app, param1, param2, etc.)
 
 // routerUsuarioSession
 let routerUsuarioSession = express.Router();
@@ -59,6 +60,7 @@ app.use("/desconectarse",routerUsuarioSession);
 app.use("/home",routerUsuarioSession);
 app.use("/user/list",routerUsuarioSession);
 app.use("/invitations/",routerUsuarioSession);
+app.use("/friends/",routerUsuarioSession);
 
 app.use(express.static('public'));
 

@@ -1,9 +1,6 @@
 module.exports = function(app, swig, gestorBD) {
     app.get("/invitations/add/:id", function (req, res) {
         req.session.usuario.invites[req.session.usuario.invites.length] = req.params.id;
-        let criterioInvitador = {
-            "_id" : gestorBD.mongo.ObjectID(req.session.usuario._id),
-        };
         let criterioBuscarInvitado = {
             "_id" : gestorBD.mongo.ObjectID(req.params.id)
         };

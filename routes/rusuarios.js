@@ -15,8 +15,13 @@ module.exports = function(app, swig, gestorBD) {
     });
 
     app.post('/usuario', function(req, res) {
+        if(req.body.email=="" || req.body.name=="" ||req.body.surname=="" ||req.body.password==""||req.body.repassword==""){
+            res.redirect("/registrarse" +
+                "?mensaje=No puede haber campos vacios"+
+                "&tipoMensaje=alert-danger ");
+            return;
+        }
         if(req.body.password != req.body.repassword){
-            // TEMPORAL MAS TARDE LANZAR ERROR
             res.redirect("/registrarse" +
                 "?mensaje=Las contraseñas no coinciden"+
                 "&tipoMensaje=alert-danger ");
@@ -53,6 +58,12 @@ module.exports = function(app, swig, gestorBD) {
     });
 
     app.post("/identificarse", function(req, res) {
+        if(req.body.email=="" || req.body.password==""){
+            res.redirect("/identificarse" +
+                "?mensaje=No puede haber campos vacios"+
+                "&tipoMensaje=alert-danger ");
+            return;
+        }
         let seguro = app.get("crypto").createHmac('sha256', app.get('clave'))
             .update(req.body.password).digest('hex');
         let criterio = {
@@ -64,6 +75,7 @@ module.exports = function(app, swig, gestorBD) {
                 req.session.usuario = null;
                 res.redirect("/identificarse" +"?mensaje=Usuario o contraseñas incorrectos"+
                     "&tipoMensaje=alert-danger ");
+                return;
             } else {
                 req.session.usuario = usuarios[0];
                 res.redirect("/home");

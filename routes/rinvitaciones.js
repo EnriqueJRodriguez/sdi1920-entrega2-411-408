@@ -52,15 +52,14 @@ module.exports = function(app, swig, gestorBD) {
         if ( req.query.pg == null){ // Puede no venir el param
             pg = 1;
         }
-        gestorBD.obtenerUsuariosPg(criterio, pg , function(usuarios, total ) {
+        gestorBD.obtenerUsuariosPg(criterio, pg, function(usuarios,total) {
             if (usuarios == null) {
                 res.redirect("/home"+ "?mensaje=Ha ocurrido un problema al mostar sus invitaciones de amistad"+
                     "&tipoMensaje=alert-danger ");
             } else {
                 usuarios = calcularInvitacionesUsuario(usuarios,req.session.usuario);
-                total = usuarios.length;
-                let ultimaPg = total/5;
-                if (total % 5 > 0 ){ // Sobran decimales
+                let ultimaPg = total/4;
+                if (total % 4 > 0 ){ // Sobran decimales
                     ultimaPg = ultimaPg+1;
                 }
                 let paginas = []; // paginas mostrar

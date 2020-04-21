@@ -46,7 +46,8 @@ module.exports = function(app, swig, gestorBD) {
                             "&tipoMensaje=alert-danger ");
                     } else {
                         req.session.usuario = usuario;
-                        res.redirect("/home");
+                        res.redirect("/home" +"?mensaje=Se ha registrado con exito"+
+                        "&tipoMensaje=alert-success");
                     }
                 });
             }else{

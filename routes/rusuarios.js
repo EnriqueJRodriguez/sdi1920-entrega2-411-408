@@ -110,6 +110,7 @@ module.exports = function(app, swig, gestorBD) {
             if (usuarios == null) {
                 res.redirect("/home"+ "?mensaje=Ha ocurrido un problema al mostar los usuarios de la red social"+
                     "&tipoMensaje=alert-danger ");
+                return;
             } else {
                 let ultimaPg = total/5;
                 if (total % 5 > 0 ){ // Sobran decimales

@@ -31,7 +31,7 @@ module.exports = {
             } else {
                 let collection = db.collection('usuarios');
                 collection.count(function(err, count){
-                    collection.find(criterio).skip( (pg-1)*5 ).limit( 5 )
+                    collection.find(criterio).skip( (pg-1)* 5 ).limit( 5 )
                         .toArray(function(err, usuarios) {
                             if (err) {
                                 funcionCallback(null);

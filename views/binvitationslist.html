@@ -6,10 +6,10 @@
     <!-- Busqueda -->
     <div class="row">
         <div id="custom-search-input ">
-            <form method="get" action="/user/list" >
+            <form method="get" action="/invitation/list" >
                 <div class="input-group col-xs-8 col-sm-6 col-md-4 col-lg-5 pull-left">
                     <input type="text" class="search-query form-control"
-                           placeholder="Nombre, apellidos o email del usuario a buscar" name="busqueda"/>
+                           placeholder="Nombre, apellidos o email del usuario a buscar" name="busqueda" value="{{ busqueda }}"/>
                     <span class="input-group-btn">
 						<button class="btn" type="submit">
 							<span class="glyphicon glyphicon-search">Buscar</span>
@@ -52,7 +52,12 @@
         <ul class="pagination">
             {% for pagina in paginas %}
             <li class="page-item" id="pi-{{ pagina }}">
-                <a class="page-link" href="/invitation/list?pg={{pagina}}">{{pagina}}</a>
+                {% if busqueda != null %}
+                <a class="page-link" href="/user/list?pg={{pagina}}&busqueda={{busqueda}}">{{pagina}}</a>
+                {% endif %}
+                {% if busqueda == null %}
+                <a class="page-link" href="/user/list?pg={{pagina}}">{{pagina}}</a>
+                {% endif %}
             </li>
             {% endfor %}
             <script>

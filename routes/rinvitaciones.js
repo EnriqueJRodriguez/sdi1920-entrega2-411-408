@@ -73,7 +73,8 @@ module.exports = function(app, swig, gestorBD) {
                         usuario: req.session.usuario,
                         usuarios: usuarios,
                         paginas: paginas,
-                        actual: pg
+                        actual: pg,
+                        busqueda: req.query.busqueda,
                     });
                     res.send(respuesta);
                 } else{

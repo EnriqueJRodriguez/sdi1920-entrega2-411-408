@@ -78,7 +78,7 @@ module.exports = function(app, swig, gestorBD) {
                     ultimaPg = ultimaPg + 1;
                 }
                 let paginas = []; // paginas mostrar
-                for (let i = pg - 2; i <= pg + 2; i++) {
+                for (let i = pg - 2; i <= pg + 2; i++) { // Revisar esto
                     if (i > 0 && i <= ultimaPg) {
                         paginas.push(i);
                     }
@@ -89,7 +89,8 @@ module.exports = function(app, swig, gestorBD) {
                         usuario: req.session.usuario,
                         usuarios: usuarios,
                         paginas: paginas,
-                        actual: pg
+                        actual: pg,
+                        busqueda: req.query.busqueda,
                     });
                     res.send(respuesta);
                 } else{

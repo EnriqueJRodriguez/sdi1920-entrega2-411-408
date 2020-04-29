@@ -48,7 +48,7 @@ module.exports = function(app, swig, gestorBD) {
 
     app.get("/friend/list", function (req, res) {
         let criterio;
-        if( req.query.busqueda != null ){
+        if( req.query.busqueda != null &&  req.query.busqueda != ""){
             criterio = {
                 '_id': {$not: {$eq: gestorBD.mongo.ObjectID(req.session.usuario._id)}},
                 $or:[

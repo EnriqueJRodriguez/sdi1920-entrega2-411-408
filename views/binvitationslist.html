@@ -53,10 +53,10 @@
             {% for pagina in paginas %}
             <li class="page-item" id="pi-{{ pagina }}">
                 {% if busqueda != null %}
-                <a class="page-link" href="/user/list?pg={{pagina}}&busqueda={{busqueda}}">{{pagina}}</a>
+                <a class="page-link" href="/invitation/list?pg={{pagina}}&busqueda={{busqueda}}">{{pagina}}</a>
                 {% endif %}
                 {% if busqueda == null %}
-                <a class="page-link" href="/user/list?pg={{pagina}}">{{pagina}}</a>
+                <a class="page-link" href="/invitation/list?pg={{pagina}}">{{pagina}}</a>
                 {% endif %}
             </li>
             {% endfor %}

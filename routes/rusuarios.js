@@ -59,7 +59,7 @@ module.exports = function(app, swig, gestorBD) {
     });
 
     app.post("/identificarse", function(req, res) {
-        if(req.body.email=="" || req.body.password==""){
+        if(req.body.email=="" || req.body.password ==""){
             res.redirect("/identificarse" +
                 "?mensaje=No puede haber campos vacios"+
                 "&tipoMensaje=alert-danger ");
@@ -86,7 +86,7 @@ module.exports = function(app, swig, gestorBD) {
 
     app.get("/user/list", function (req, res) {
         let criterio;
-        if( req.query.busqueda != null ){
+        if( req.query.busqueda != null &&  req.query.busqueda != ""){
             criterio = {
                 '_id': {$not: {$eq: gestorBD.mongo.ObjectID(req.session.usuario._id)}},
                 $or:[

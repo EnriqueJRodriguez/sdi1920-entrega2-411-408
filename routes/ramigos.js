@@ -73,8 +73,9 @@ module.exports = function(app, swig, gestorBD) {
                 res.redirect("/home"+ "?mensaje=Ha ocurrido un problema al mostar sus amigos"+
                     "&tipoMensaje=alert-danger ");
             } else {
-                let ultimaPg = total / 5;
-                if (total % 5 > 0) { // Sobran decimales
+                usuarios = calcularAmistadesUsuario(usuarios,req.session.usuario);
+                let ultimaPg = usuarios.length / 5;
+                if (usuarios.length % 5 > 0) { // Sobran decimales
                     ultimaPg = ultimaPg + 1;
                 }
                 let paginas = []; // paginas mostrar
@@ -83,7 +84,7 @@ module.exports = function(app, swig, gestorBD) {
                         paginas.push(i);
                     }
                 }
-                usuarios = calcularAmistadesUsuario(usuarios,req.session.usuario);
+
                 if(usuarios != null) {
                     let respuesta = swig.renderFile('views/bfriendslist.html', {
                         usuario: req.session.usuario,

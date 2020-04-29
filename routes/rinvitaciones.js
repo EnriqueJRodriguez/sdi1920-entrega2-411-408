@@ -32,7 +32,7 @@ module.exports = function(app, swig, gestorBD) {
     });
     app.get("/invitation/list", function (req, res) {
         let criterio;
-        if( req.query.busqueda != null ){
+        if( req.query.busqueda != null &&  req.query.busqueda != ""){
             criterio = {
                 '_id': {$not: {$eq: gestorBD.mongo.ObjectID(req.session.usuario._id)}},
                 $or:[
@@ -58,13 +58,13 @@ module.exports = function(app, swig, gestorBD) {
                     "&tipoMensaje=alert-danger ");
             } else {
                 usuarios = calcularInvitacionesUsuario(usuarios,req.session.usuario);
-                let ultimaPg = total / 5;
-                if (total % 5 > 0) { // Sobran decimales
-                    ultimaPg = ultimaPg + 1;
+                let ultimaPg = usuarios.length/5;
+                if (usuarios.length % 5 > 0 ){ // Sobran decimales
+                    ultimaPg = ultimaPg+1;
                 }
                 let paginas = []; // paginas mostrar
-                for (let i = pg - 2; i <= pg + 2; i++) {
-                    if (i > 0 && i <= ultimaPg) {
+                for(let i = pg-2 ; i <= pg+2 ; i++){
+                    if ( i > 0 && i <= ultimaPg){
                         paginas.push(i);
                     }
                 }

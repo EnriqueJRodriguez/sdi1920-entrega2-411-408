@@ -33,14 +33,9 @@ module.exports = function(app,gestorBD) {
     });
     app.get("/api/mensaje", function(req, res) {
         let usuario = res.usuario;
-        let criterio_mensaje = { $and: [ 
-            $or: [ 
-                { "emisor": req.body.usuario1 }, 
-                { "destino": req.body.usuario2 }
-            ], $or: [
-                { "emisor": req.body.usuario2 }, 
-                { "destino": req.body.usuario1 }
-            ]
+        let criterio_mensaje = { $or: [ 
+            { "emisor": req.body.usuario1, "destino": req.body.usuario2 }, 
+            { "emisor": req.body.usuario2, "destino": req.body.usuario1 } 
         ] };
         gestorBD.obtenerMensajes(criterio_mensaje, function(mensajes) {
             if (mensajes == null) {

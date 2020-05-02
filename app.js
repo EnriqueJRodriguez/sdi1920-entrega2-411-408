@@ -52,6 +52,7 @@ app.set('crypto',crypto);
 require("./routes/rusuarios.js")(app,swig, gestorBD); // (app, param1, param2, etc.)
 require("./routes/rinvitaciones.js")(app,swig, gestorBD); // (app, param1, param2, etc.)
 require("./routes/ramigos.js")(app,swig, gestorBD); // (app, param1, param2, etc.)
+require("./api/routes/rapiusuarios.js")(app, gestorBD);
 
 // routerUsuarioToken
 var routerUsuarioToken = express.Router();

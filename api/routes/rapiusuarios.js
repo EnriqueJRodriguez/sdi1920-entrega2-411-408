@@ -31,6 +31,24 @@ module.exports = function(app,gestorBD) {
         res.status(200);
         res.send(JSON.stringify(amigos));
     });
+    app.get("/api/mensaje", function(req, res) {
+        let usuario = res.usuario;
+        let criterio_mensaje = { $or: [ 
+            { "emisor": usuario }, 
+            { "destino": usuario } 
+        ] };
+        gestorBD.obtenerMensajes(criterio_mensaje, function(mensajes) {
+            if (mensajes == null) {
+                res.status(500);
+                res.json({
+                    error : "se ha producido un error"
+                });
+            } else {
+                res.status(200);
+                res.send(JSON.stringify(mensajes));
+            }
+        });
+    });
     app.post("/api/mensaje", function(req,res) { 
         var mensaje = {
             emisor : res.usuario,

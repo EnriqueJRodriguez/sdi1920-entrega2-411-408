@@ -22,8 +22,8 @@ $(document).ready(function() {
         for(i = 0; i < amigosMostrar.length; i++) {
             $("#tablaCuerpo").append(
                 "<tr id=" + amigosMostrar[i]._id + ">" +
-                "<td>" + amigosMostrar[i].nombre + "</td>" +
-                "<td>" + amigosMostrar[i].apellidos + "</td>" +
+                "<td>" + amigosMostrar[i].name + "</td>" +
+                "<td>" + amigosMostrar[i].surname + "</td>" +
                 "<td>" + amigosMostrar[i].email + "</td>" +
                 "<td>" +
                 "<a onclick=mensajes('" + amigosMostrar[i]._id + "')>Mensajes</a>" +
@@ -40,7 +40,7 @@ $(document).ready(function() {
         var amigosFiltrados = [];
         var nombreFiltro = $("#filtro-nombre").val();
         for (i = 0; i < amigos.length; i++) {
-            if (amigos[i].nombre.indexOf(nombreFiltro) != -1) {
+            if (amigos[i].name.indexOf(nombreFiltro) != -1) {
                 amigosFiltrados.push(amigos[i]);
             }
         }

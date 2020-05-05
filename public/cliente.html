@@ -1,0 +1,56 @@
+<html lang="en">
+    <head>
+        <title>Red Social</title>
+        <meta charset="utf-8"/>
+        <meta name="viewport" content="width=device-width, initial-scale=1"/>
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"/>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.0/jquery.min.js"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+        <script src="js/cookie.js"></script>
+        <script src="js/api/cliente.js"></script>
+    </head>
+    <body>
+
+        <!-- Barra de navegación superior -->
+        <nav class="navbar navbar-inverse">
+            <div class="container-fluid">
+                <div class="navbar-header">
+                    <button type="button" class="navbar-toggle" data-toggle="collapse"
+                                                                data-target="#myNavbar">
+                        <span class="icon-bar"></span> <span class="icon-bar"></span> <span
+                                                             class="icon-bar"></span>
+                    </button>
+                </div>
+                <div class="collapse navbar-collapse" id="myNavbar">
+                    <ul class="nav navbar-nav">
+                        <li><a href="/">Inicio</a></li>
+                    </ul>
+                    <ul class="nav navbar-nav">
+                        <li id="friends-menu" class="dropdown">
+                            <a class="dropdown-toggle" data-toggle="dropdown" href="#">
+                                Amigos
+                                <span class="caret"></span>
+                            </a>
+                            <ul class="dropdown-menu">
+                                <li><a onclick=widgetAmigos()>Ver amigos</a></li>
+                            </ul>
+                        </li>
+                    </ul>
+                    <ul class="nav navbar-nav navbar-right">
+                    </ul>
+                </div>
+            </div>
+        </nav>
+
+        <div class="alert alert-danger" id="div-errores">
+        </div>
+
+
+        <!-- Contenido -->
+        <div class="container" id="contenedor-principal"> <!--  id para identificar -->
+
+        </div>
+
+    </body>
+</html>
+

@@ -4,7 +4,9 @@ $(document).ready(function() {
         $.ajax({
             url : URLbase + "/mensaje",
             type: "GET",
-            data: { },
+            data: {
+                other_user: idUsuarioSeleccionado
+            },
             dataType: 'json',
             headers: { "token": token },
             success : function(respuesta) {

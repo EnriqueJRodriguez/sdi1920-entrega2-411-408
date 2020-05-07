@@ -27,9 +27,18 @@ module.exports = function(app,gestorBD) {
     });
     app.get("/api/amigo", function(req, res) {
         let usuario = res.usuario;
-        let amigos = usuario.friends;
-        res.status(200);
-        res.send(JSON.stringify(amigos));
+        let criterio = { "email" : usuario };
+        gestorBD.obtenerUsuarios(criterio, function(usuarios) {
+            if (usuarios == null) {
+                res.status(500);
+                res.json({
+                    error : "se ha producido un error"
+                });
+            } else {
+                res.status(200);
+                res.send(JSON.stringify(usuarios[0].friends));
+            }
+        });
     });
     app.get("/api/mensaje", function(req, res) {
         let usuario = res.usuario;

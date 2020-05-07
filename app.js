@@ -39,21 +39,6 @@ let bodyParser = require('body-parser');
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
-app.use(express.static('public'));
-app.use(express.static('public/img'));
-
-// Variables
-app.set('port', 8081);
-app.set('db','mongodb://admin:robertocornellananoexistesonlospadres@sdi1920-entrega2-411-408-shard-00-00-axx04.mongodb.net:27017,sdi1920-entrega2-411-408-shard-00-01-axx04.mongodb.net:27017,sdi1920-entrega2-411-408-shard-00-02-axx04.mongodb.net:27017/test?ssl=true&replicaSet=sdi1920-entrega2-411-408-shard-0&authSource=admin&retryWrites=true&w=majority');
-app.set('clave','abcdefg');
-app.set('crypto',crypto);
-
-//Rutas/controladores por lógica
-require("./routes/rusuarios.js")(app,swig, gestorBD); // (app, param1, param2, etc.)
-require("./routes/rinvitaciones.js")(app,swig, gestorBD); // (app, param1, param2, etc.)
-require("./routes/ramigos.js")(app,swig, gestorBD); // (app, param1, param2, etc.)
-require("./api/routes/rapiusuarios.js")(app, gestorBD);
-
 // routerUsuarioToken
 var routerUsuarioToken = express.Router();
 routerUsuarioToken.use(function(req, res, next) {
@@ -110,6 +95,19 @@ app.use("/invitations/",routerUsuarioSession);
 app.use("/friends/",routerUsuarioSession);
 
 app.use(express.static('public'));
+app.use(express.static('public/img'));
+
+// Variables
+app.set('port', 8081);
+app.set('db','mongodb://admin:robertocornellananoexistesonlospadres@sdi1920-entrega2-411-408-shard-00-00-axx04.mongodb.net:27017,sdi1920-entrega2-411-408-shard-00-01-axx04.mongodb.net:27017,sdi1920-entrega2-411-408-shard-00-02-axx04.mongodb.net:27017/test?ssl=true&replicaSet=sdi1920-entrega2-411-408-shard-0&authSource=admin&retryWrites=true&w=majority');
+app.set('clave','abcdefg');
+app.set('crypto',crypto);
+
+//Rutas/controladores por lógica
+require("./routes/rusuarios.js")(app,swig, gestorBD); // (app, param1, param2, etc.)
+require("./routes/rinvitaciones.js")(app,swig, gestorBD); // (app, param1, param2, etc.)
+require("./routes/ramigos.js")(app,swig, gestorBD); // (app, param1, param2, etc.)
+require("./api/routes/rapiusuarios.js")(app, gestorBD);
 
 app.get('/desconectarse', function (req, res) {
     req.session.usuario = null;

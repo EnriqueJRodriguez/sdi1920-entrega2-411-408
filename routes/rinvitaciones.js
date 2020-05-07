@@ -74,7 +74,7 @@ module.exports = function(app, swig, gestorBD) {
                         usuarios: usuarios,
                         paginas: paginas,
                         actual: pg,
-                        busqueda: req.query.busqueda,
+                        busqueda: req.query.busqueda
                     });
                     res.send(respuesta);
                 } else{

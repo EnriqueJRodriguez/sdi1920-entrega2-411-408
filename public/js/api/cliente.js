@@ -1,6 +1,6 @@
+var URLbase = "http://localhost:8081/api";
 $(document).ready(function () {
     var token;
-    var URLbase = "https://localhost:8081/api";
     $("#contenedor-principal").load("widget-login.html");
 
     if (Cookies.get('token') != null) { 
@@ -15,10 +15,10 @@ $(document).ready(function () {
         }
     }
 
-    function widgetCanciones() { 
-        $("#contenedor-principal").load("widget-amigos.html");
-    }
-
     $("#div-errores").hide();
 });
+
+function widgetAmigos() { 
+    $("#contenedor-principal").load("widget-amigos.html");
+}
 

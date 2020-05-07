@@ -20,6 +20,7 @@ $(document).ready(function() {
     function actualizarTabla(amigosMostrar) {
         $("#tablaCuerpo").empty(); // Vaciar la tabla
         for(i = 0; i < amigosMostrar.length; i++) {
+            console.log("Amigo - Nombre: " + amigosMostrar[i].name + ", Apellidos: " + amigosMostrar[i].surname + ", Email" + amigosMostrar[i].email);
             $("#tablaCuerpo").append(
                 "<tr id=" + amigosMostrar[i]._id + ">" +
                 "<td>" + amigosMostrar[i].name + "</td>" +
@@ -45,5 +46,5 @@ $(document).ready(function() {
             }
         }
         actualizarTabla(amigosFiltrados);
-    });
+    })
 });

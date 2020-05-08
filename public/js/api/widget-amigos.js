@@ -33,7 +33,6 @@ function actualizarTabla(amigosMostrar) {
 }
 function mensajes(_id) {
     idUsuarioSeleccionado = _id;
-    console.log("ID Usuario: " + idUsuarioSeleccionado);
     $("#contenedor-principal").load("widget-mensajes.html");
 }
 $('#filtro-nombre').on('input', function(e) {

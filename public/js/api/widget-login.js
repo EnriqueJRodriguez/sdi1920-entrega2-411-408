@@ -10,7 +10,6 @@ $(document).ready(function() {
             },
             dataType : 'json',
             success : function(respuesta) {
-                console.log(respuesta.token);
                 token = respuesta.token;
                 Cookies.set('token', respuesta.token);
                 $("#contenedor-principal").load("widget-amigos.html");

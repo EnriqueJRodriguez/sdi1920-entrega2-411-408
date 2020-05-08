@@ -1,40 +1,38 @@
 var _this = this;    
 var mensajes;
 function cargarMensajes() {
-    console.log("ID Usuario (Destiono - Cargar): " + idUsuarioSeleccionado);
     $.ajax({
-        url : URLbase + "/mensaje",
+        url : URLbase + "/mensaje/" + idUsuarioSeleccionado,
         type: "GET",
-        data: {
-            other_user: idUsuarioSeleccionado
-        },
+        data: { },
         dataType: 'json',
         headers: { "token": token },
         success : function(respuesta) {
             mensajes = respuesta;
-            actualizarTabla(mensajes);
+            actualizarVista(mensajes);
         },
         error : function(error) {
             $("#contenedor-principal").load("widget-login.html");
         }
     });
 }
-function actualizarTabla(mensajesMostrar) {
-    console.log("HEEEEY");
-    $("#tablaCuerpo").empty(); // Vaciar la tabla
+function actualizarVista(mensajesMostrar) {
+    $("#div-mensajes").empty(); // Vaciar la tabla
     for(i = 0; i < mensajesMostrar.length; i++) {
-        console.log("Mensaje: " + mensajesMonstrar[i]._id);
-        $("#tablaCuerpo").append(
-            "<tr id=" + mensajesMostrar[i]._id + ">" +
-            "<td>" + mensajesMostrar[i].emisor + "</td>" +
-            "<td>" + mensajesMostrar[i].destino + "</td>" +
-            "<td>" + mensajesMostrar[i].texto + "</td>" +
-            "<td>" + mensajesMostrar[i].leido + "</td>" +
-            "</tr>");
+        if (mensajesMostrar[i].emisor == idUsuarioSeleccionado) {
+            $("#div-mensajes").append(
+                "<div class='chat left'>" +
+                "<p class='topleft'>" + mensajesMostrar[i].texto + "</p>" +
+                "</div>");
+        } else {
+            $("#div-mensajes").append(
+                "<div class='chat right'>" +
+                "<p class='topleft'>" + mensajesMostrar[i].texto + "</p>" +
+                "</div>");
+        }
     }
 }
 function agregarMensaje() {
-    console.log("ID Usuario (Destino - Agregar): " + idUsuarioSeleccionado);
     $.ajax({
         url: URLbase +"/mensaje",
         type: "POST",
@@ -45,21 +43,19 @@ function agregarMensaje() {
         dataType: 'json',
         headers: {"token":token },
         success : function(respuesta) {
-            console.log(respuesta); // <-- Prueba
             $("#contenedor-principal").load("widget-canciones.html");
         },
         error : function(error) {
             $("#div-errores").show();
-            console.log(error.responseJSON);
             var result = "";
             for (i = 0; i < error.responseJSON.errores.length; i++) {
-                console.log(error.responseJSON.errores[i]);
                 result = result.concat(error.responseJSON.errores[i].toString() + "\n");
             }
             $("#div-errores").text("Errors: \n");
         }
     });
+    $("#agregar-texto").val("");
 }
 $(document).ready(function() {
-    _this.cargarMensajes();
+    setInterval(_this.cargarMensajes, 1000);
 });

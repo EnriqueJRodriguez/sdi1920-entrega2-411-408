@@ -1,0 +1,25 @@
+.chat {
+    width: 50%;
+    height: 75px;
+    margin: 1em auto;
+    border-radius: 12px;
+    position: relative;
+    display: block;
+}
+.left {
+    border-bottom-left-radius: 0;
+    background: darkseagreen;
+    color: black;
+}
+.right {
+    border-bottom-right-radius: 0;
+    background: black;
+    color: white;
+}
+.topleft {
+    position: absolute;
+    top: 8px;
+    left: 16px;
+    font-size: 18px;
+}
+

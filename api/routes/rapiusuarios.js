@@ -76,7 +76,7 @@ module.exports = function(app,gestorBD) {
             }
         });
     });
-    app.get("/api/mensaje", function(req, res) {
+    app.get("/api/mensaje/:id", function(req, res) {
         let usuario = res.usuario;
         let criterio = { "email" : usuario };
         gestorBD.obtenerUsuarios(criterio, function(usuarios) {
@@ -87,8 +87,8 @@ module.exports = function(app,gestorBD) {
                 });
             } else {
                 let criterio_mensaje = { $or: [ 
-                    { "emisor": gestorBD.mongo.ObjectID(usuarios[0]._id), "destino": gestorBD.mongo.ObjectID(req.body.other_user) }, 
-                    { "emisor": gestorBD.mongo.ObjectID(req.body.other_user), "destino": gestorBD.mongo.ObjectID(usuarios[0]._id) } 
+                    { "emisor": gestorBD.mongo.ObjectID(usuarios[0]._id), "destino": gestorBD.mongo.ObjectID(req.params.id) }, 
+                    { "emisor": gestorBD.mongo.ObjectID(req.params.id), "destino": gestorBD.mongo.ObjectID(usuarios[0]._id) } 
                 ] };
                 gestorBD.obtenerMensajes(criterio_mensaje, function(mensajes) {
                     if (mensajes == null) {
@@ -115,7 +115,7 @@ module.exports = function(app,gestorBD) {
                 });
             } else {
                 var mensaje = {
-                    emisor : usuarios[0]._id,
+                    emisor : gestorBD.mongo.ObjectID(usuarios[0]._id),
                     destino : gestorBD.mongo.ObjectID(req.body.destino),
                     texto : req.body.texto,
                     leido : false

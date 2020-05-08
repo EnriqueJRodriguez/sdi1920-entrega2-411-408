@@ -6,6 +6,17 @@ let mongo = require('mongodb');
 let gestorBD = require("./modules/gestorBD.js");
 gestorBD.init(app,mongo);
 
+app.use(function(req, res, next) {
+    res.header("Access-Control-Allow-Origin", "*");
+    res.header("Access-Control-Allow-Credentials", "true");
+    res.header("Access-Control-Allow-Methods", "POST, GET, DELETE, UPDATE, PUT");
+    res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept, token");
+    // Debemos especificar todas las headers que se aceptan. Content-Type, token
+    next();
+});
+
+let jwt = require('jsonwebtoken');
+app.set('jwt', jwt);
 
 let crypto = require('crypto');
 let expressSession = require('express-session');
@@ -28,19 +39,41 @@ let bodyParser = require('body-parser');
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
-app.use(express.static('public'));
-app.use(express.static('public/img'));
+// routerUsuarioToken
+var routerUsuarioToken = express.Router();
+routerUsuarioToken.use(function(req, res, next) {
+    // obtener el token, vía headers (opcionalmente GET y/o POST).
+    var token = req.headers['token'] || req.body.token || req.query.token;
+    if (token != null) {
+        // verificar el token
+        jwt.verify(token, 'secreto', function(err, infoToken) {
+            if (err || (Date.now()/1000 - infoToken.tiempo) > 240 ) {
+                res.status(403); // Forbidden
+                res.json({
+                    acceso : false,
+                    error: 'Token invalido o caducado'
+                });
+                // También podríamos comprobar que intoToken.usuario existe
+                return;
+            } else {
+                // dejamos correr la petición
+                res.usuario = infoToken.usuario;
+                next();
+            }
+        });
+    } else {
+        res.status(403); // Forbidden
+        res.json({
+            acceso : false,
+            mensaje: 'No hay Token'}
+        );
+    }
+});
 
-// Variables
-app.set('port', 8081);
-app.set('db','mongodb://admin:robertocornellananoexistesonlospadres@sdi1920-entrega2-411-408-shard-00-00-axx04.mongodb.net:27017,sdi1920-entrega2-411-408-shard-00-01-axx04.mongodb.net:27017,sdi1920-entrega2-411-408-shard-00-02-axx04.mongodb.net:27017/test?ssl=true&replicaSet=sdi1920-entrega2-411-408-shard-0&authSource=admin&retryWrites=true&w=majority');
-app.set('clave','abcdefg');
-app.set('crypto',crypto);
-
-//Rutas/controladores por lógica
-require("./routes/rusuarios.js")(app,swig, gestorBD); // (app, param1, param2, etc.)
-require("./routes/rinvitaciones.js")(app,swig, gestorBD); // (app, param1, param2, etc.)
-require("./routes/ramigos.js")(app,swig, gestorBD); // (app, param1, param2, etc.)
+// Aplicar routerUsuarioToken
+app.use('/api/amigo', routerUsuarioToken);
+app.use('/api/amigo/list', routerUsuarioToken);
+app.use('/api/mensaje', routerUsuarioToken);
 
 // routerUsuarioSession
 let routerUsuarioSession = express.Router();
@@ -63,6 +96,19 @@ app.use("/invitations/",routerUsuarioSession);
 app.use("/friends/",routerUsuarioSession);
 
 app.use(express.static('public'));
+app.use(express.static('public/img'));
+
+// Variables
+app.set('port', 8081);
+app.set('db','mongodb://admin:robertocornellananoexistesonlospadres@sdi1920-entrega2-411-408-shard-00-00-axx04.mongodb.net:27017,sdi1920-entrega2-411-408-shard-00-01-axx04.mongodb.net:27017,sdi1920-entrega2-411-408-shard-00-02-axx04.mongodb.net:27017/test?ssl=true&replicaSet=sdi1920-entrega2-411-408-shard-0&authSource=admin&retryWrites=true&w=majority');
+app.set('clave','abcdefg');
+app.set('crypto',crypto);
+
+//Rutas/controladores por lógica
+require("./routes/rusuarios.js")(app,swig, gestorBD); // (app, param1, param2, etc.)
+require("./routes/rinvitaciones.js")(app,swig, gestorBD); // (app, param1, param2, etc.)
+require("./routes/ramigos.js")(app,swig, gestorBD); // (app, param1, param2, etc.)
+require("./api/routes/rapiusuarios.js")(app, gestorBD);
 
 app.get('/desconectarse', function (req, res) {
     req.session.usuario = null;

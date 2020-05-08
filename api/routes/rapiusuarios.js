@@ -40,52 +40,109 @@ module.exports = function(app,gestorBD) {
             }
         });
     });
-    app.get("/api/mensaje", function(req, res) {
+    app.get("/api/amigo/list", function(req, res) {
         let usuario = res.usuario;
-        let criterio_mensaje = { $or: [ 
-            { "emisor": usuario, "destino": req.body.other_user }, 
-            { "emisor": req.body.other_user, "destino": usuario } 
-        ] };
-        gestorBD.obtenerMensajes(criterio_mensaje, function(mensajes) {
-            if (mensajes == null) {
+        let criterio = { "email" : usuario };
+        gestorBD.obtenerUsuarios(criterio, function(usuarios) {
+            if (usuarios == null) {
                 res.status(500);
                 res.json({
                     error : "se ha producido un error"
                 });
             } else {
-                res.status(200);
-                res.send(JSON.stringify(mensajes));
+                let criterio_usuarios = {
+                    '_id': {$not: {$eq: gestorBD.mongo.ObjectID(usuarios[0]._id)}},
+                    'rol': {$not: {$eq: "ADMINISTRADOR"}}
+                };
+                gestorBD.obtenerUsuarios(criterio_usuarios, function(other_users) {
+                    if (other_users == null) {
+                        res.status(500);
+                        res.json({
+                            error : "se ha producido un error"
+                        });
+                    } else {
+                        let userFriends = [];
+                        let pointer = 0;
+                        for(i = 0; i < other_users.length; i++) {
+                            if (usuarios[0].friends.includes(other_users[i]._id.toString())) {
+                                userFriends[pointer] = other_users[i];
+                                pointer++;
+                            }
+                        }
+                        res.status(200);
+                        res.send(JSON.stringify(userFriends));
+                    }
+                });
+            }
+        });
+    });
+    app.get("/api/mensaje", function(req, res) {
+        let usuario = res.usuario;
+        let criterio = { "email" : usuario };
+        gestorBD.obtenerUsuarios(criterio, function(usuarios) {
+            if (usuarios == null) {
+                res.status(500);
+                res.json({
+                    error : "se ha producido un error"
+                });
+            } else {
+                let criterio_mensaje = { $or: [ 
+                    { "emisor": gestorBD.mongo.ObjectID(usuarios[0]._id), "destino": gestorBD.mongo.ObjectID(req.body.other_user) }, 
+                    { "emisor": gestorBD.mongo.ObjectID(req.body.other_user), "destino": gestorBD.mongo.ObjectID(usuarios[0]._id) } 
+                ] };
+                gestorBD.obtenerMensajes(criterio_mensaje, function(mensajes) {
+                    if (mensajes == null) {
+                        res.status(500);
+                        res.json({
+                            error : "se ha producido un error"
+                        });
+                    } else {
+                        res.status(200);
+                        res.send(JSON.stringify(mensajes));
+                    }
+                });
             }
         });
     });
     app.post("/api/mensaje", function(req,res) { 
-        var mensaje = {
-            emisor : res.usuario,
-            destino : req.body.destino,
-            texto : req.body.texto,
-            leido : false
-        }        
-        validarMensaje(mensaje, function(valido, errores) {
-            if (valido) {
-                gestorBD.insertarMensaje(mensaje, function(id) { 
-                    if (id == null) { 
-                        errores.push("Se ha producido un error al insertar el mensaje");
-                        res.status(500);                    
+        let usuario = res.usuario;
+        let criterio = { "email" : usuario };
+        gestorBD.obtenerUsuarios(criterio, function(usuarios) {
+            if (usuarios == null) {                
+                res.status(500);
+                res.json({
+                    errores : [ "se ha producido un error" ]
+                });
+            } else {
+                var mensaje = {
+                    emisor : usuarios[0]._id,
+                    destino : gestorBD.mongo.ObjectID(req.body.destino),
+                    texto : req.body.texto,
+                    leido : false
+                }        
+                validarMensaje(mensaje, function(valido, errores) {
+                    if (valido) {
+                        gestorBD.insertarMensaje(mensaje, function(id) { 
+                            if (id == null) { 
+                                errores.push("Se ha producido un error al insertar el mensaje");
+                                res.status(500);                    
+                                res.json({
+                                    errores : errores
+                                });
+                            } else {
+                                res.status(201);
+                                res.json({ 
+                                    mensaje : "mensaje insertado",
+                                    _id : id
+                                });
+                            }
+                        });
+                    } else {
+                        res.status(400);
                         res.json({
                             errores : errores
                         });
-                    } else {
-                        res.status(201);
-                        res.json({ 
-                            mensaje : "mensaje insertado",
-                            _id : id
-                        });
                     }
-                });
-            } else {
-                res.status(400);
-                res.json({
-                    errores : errores
                 });
             }
         });

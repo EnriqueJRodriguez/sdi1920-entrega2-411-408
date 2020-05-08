@@ -11,5 +11,17 @@
         </thead>
         <tbody id="tablaCuerpo"></tbody>
     </table>
+    <div id="mensajes-form">
+        <div class="form-group">
+            <label class="control-label col-sm-2" for="agregar-texto">Texto:</label>
+            <div class="col-sm-10">
+                <input type="text" class="form-control" name="agregar-texto" placeholder="Texto del mensaje" id="agregar-texto"/>
+            </div>
+        </div>
+        <div class="col-sm-offset-2 col-sm-10">
+            <button type="button" class="btn btn-primary" id="boton-agregar" onclick="agregarMensaje()">Enviar</button>
+        </div>
+    </div>
 </div>
+<script src="js/api/widget-mensajes.js"></script>
 

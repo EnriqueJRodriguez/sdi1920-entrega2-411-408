@@ -72,6 +72,7 @@ routerUsuarioToken.use(function(req, res, next) {
 
 // Aplicar routerUsuarioToken
 app.use('/api/amigo', routerUsuarioToken);
+app.use('/api/amigo/list', routerUsuarioToken);
 app.use('/api/mensaje', routerUsuarioToken);
 
 // routerUsuarioSession

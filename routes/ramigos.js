@@ -48,9 +48,14 @@ module.exports = function(app, swig, gestorBD) {
 
     app.get("/friend/list", function (req, res) {
         let criterio;
+        let friendsList = [];
+        for(i= 0; i<req.session.usuario.friends.length; i++){
+            friendsList.push(gestorBD.mongo.ObjectID(req.session.usuario.friends[i]));
+        }
         if( req.query.busqueda != null &&  req.query.busqueda != ""){
             criterio = {
                 '_id': {$not: {$eq: gestorBD.mongo.ObjectID(req.session.usuario._id)}},
+                '_id': {$in: friendsList},
                 $or:[
                     {'name': new RegExp(req.query.busqueda + "+", 'i')},
                     {'surname': new RegExp(req.query.busqueda + "+", 'i')},
@@ -61,6 +66,7 @@ module.exports = function(app, swig, gestorBD) {
         }else {
             criterio = {
                 '_id': {$not: {$eq: gestorBD.mongo.ObjectID(req.session.usuario._id)}},
+                '_id': {$in: friendsList},
                 'rol': {$not: {$eq: "ADMINISTRADOR"}}
             };
         }
@@ -73,7 +79,6 @@ module.exports = function(app, swig, gestorBD) {
                 res.redirect("/home"+ "?mensaje=Ha ocurrido un problema al mostar sus amigos"+
                     "&tipoMensaje=alert-danger ");
             } else {
-                usuarios = calcularAmistadesUsuario(usuarios,req.session.usuario);
                 let ultimaPg = usuarios.length / 5;
                 if (usuarios.length % 5 > 0) { // Sobran decimales
                     ultimaPg = ultimaPg + 1;
@@ -84,7 +89,6 @@ module.exports = function(app, swig, gestorBD) {
                         paginas.push(i);
                     }
                 }
-
                 if(usuarios != null) {
                     let respuesta = swig.renderFile('views/bfriendslist.html', {
                         usuario: req.session.usuario,
@@ -102,18 +106,4 @@ module.exports = function(app, swig, gestorBD) {
         });
     });
 
-    function calcularAmistadesUsuario(usuarios,usuario){
-        if(usuarios == null || usuario == null){
-            return null;
-        }
-        let userFriends = [];
-        let pointer = 0;
-        for(i=0; i<usuarios.length;i++){
-            if(usuario.friends.includes(usuarios[i]._id.toString())){
-                userFriends[pointer] = usuarios[i];
-                pointer++;
-            }
-        }
-        return userFriends;
-    }
 }

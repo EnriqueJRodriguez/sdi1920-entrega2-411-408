@@ -32,9 +32,15 @@ module.exports = function(app, swig, gestorBD) {
     });
     app.get("/invitation/list", function (req, res) {
         let criterio;
+        let invitesList = [];
+        for(i= 0; i<req.session.usuario.invites.length; i++){
+            invitesList.push(gestorBD.mongo.ObjectID(req.session.usuario.invites[i]));
+        }
         if( req.query.busqueda != null &&  req.query.busqueda != ""){
+
             criterio = {
                 '_id': {$not: {$eq: gestorBD.mongo.ObjectID(req.session.usuario._id)}},
+                '_id': {$in: invitesList},
                 $or:[
                     {'name': new RegExp(req.query.busqueda + "+", 'i')},
                     {'surname': new RegExp(req.query.busqueda + "+", 'i')},
@@ -45,6 +51,7 @@ module.exports = function(app, swig, gestorBD) {
         }else {
             criterio = {
                 '_id': {$not: {$eq: gestorBD.mongo.ObjectID(req.session.usuario._id)}},
+                '_id': {$in: invitesList},
                 'rol': {$not: {$eq: "ADMINISTRADOR"}}
             };
         }
@@ -52,14 +59,13 @@ module.exports = function(app, swig, gestorBD) {
         if ( req.query.pg == null){ // Puede no venir el param
             pg = 1;
         }
-        gestorBD.obtenerUsuarios(criterio, function(usuarios,total) {
+        gestorBD.obtenerUsuariosPg(criterio, pg, function(usuarios,total) {
             if (usuarios == null) {
                 res.redirect("/home"+ "?mensaje=Ha ocurrido un problema al mostar sus invitaciones de amistad"+
                     "&tipoMensaje=alert-danger ");
             } else {
-                let usuariosInvitados = calcularInvitacionesUsuario(usuarios, req.session.usuario);
-                let ultimaPg = usuariosInvitados.length/5;
-                if (usuariosInvitados.length % 5 > 0 ){ // Sobran decimales
+                let ultimaPg = total/5;
+                if (total % 5 > 0 ){ // Sobran decimales
                     ultimaPg = ultimaPg+1;
                 }
                 let paginas = []; // paginas mostrar
@@ -71,7 +77,7 @@ module.exports = function(app, swig, gestorBD) {
                 if(usuarios != null) {
                     let respuesta = swig.renderFile('views/binvitationslist.html', {
                         usuario: req.session.usuario,
-                        usuarios: usuariosInvitados,
+                        usuarios: usuarios,
                         paginas: paginas,
                         actual: pg,
                         busqueda: req.query.busqueda
@@ -85,18 +91,4 @@ module.exports = function(app, swig, gestorBD) {
         });
     });
 
-    function calcularInvitacionesUsuario(usuarios,usuario){
-        if(usuarios == null || usuario == null){
-            return null;
-        }
-        let userInvites = [];
-        let pointer = 0;
-        for(i=0; i<usuarios.length;i++){
-            if(usuario.invites.includes(usuarios[i]._id.toString())){
-                userInvites[pointer] = usuarios[i];
-                pointer++;
-            }
-        }
-        return userInvites;
-    }
 }

@@ -92,8 +92,8 @@ routerUsuarioSession.use(function(req, res, next) {
 app.use("/desconectarse",routerUsuarioSession);
 app.use("/home",routerUsuarioSession);
 app.use("/user/list",routerUsuarioSession);
-app.use("/invitations/",routerUsuarioSession);
-app.use("/friends/",routerUsuarioSession);
+app.use("/invitation/list",routerUsuarioSession);
+app.use("/friend/list",routerUsuarioSession);
 
 app.use(express.static('public'));
 app.use(express.static('public/img'));
@@ -112,7 +112,7 @@ require("./api/routes/rapiusuarios.js")(app, gestorBD);
 
 app.get('/desconectarse', function (req, res) {
     req.session.usuario = null;
-    res.redirect("/");
+    res.redirect("/identificarse");
 });
 app.get("/home", function(req, res) {
     let respuesta = swig.renderFile('views/home.html',{usuario: req.session.usuario});

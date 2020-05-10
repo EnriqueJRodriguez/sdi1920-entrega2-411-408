@@ -1,22 +1,45 @@
 module.exports = function(app, swig, gestorBD, logger) {
+    /*
+     * Petición GET que le devuelve la view "index" al usuario
+     * que la realiza.
+     */
     app.get("/", function(req, res) {
         logger.info("Usuario accede al index");
         let respuesta = swig.renderFile('views/index.html',{usuario: req.session.usuario});
         res.send(respuesta);
     });
 
+    /*
+     * Petición GET que le devuelve la view de registro de usuario
+     * que la realiza.
+     */
     app.get("/registrarse", function(req, res) {
         logger.info("Usuario accede a la página de registro");
         let respuesta = swig.renderFile('views/bregistro.html', {});
         res.send(respuesta);
     });
 
+    /*
+     * Petición GET que le devuelve la view de autenticación al usuario
+     * que la realiza.
+     */
     app.get("/identificarse", function(req, res) {
         logger.info("Usuario accede a la página de autenticación");
         let respuesta = swig.renderFile('views/bidentificacion.html', {});
         res.send(respuesta);
     });
 
+    /*
+     * Petición POST que registra un nuevo usuario en la base
+     * de datos. Este usuario tendrá:
+     *  - email
+     *  - nombre
+     *  - apellidos
+     *  - contraseña
+     *  - rol
+     *  - Lista de amigos (vacía al principio)
+     *  - Lista de invitaciones de amistad (vacía al principio)
+     */
     app.post('/usuario', function(req, res) {
         logger.info("Usuario intenta registrarse");
         if(req.body.email=="" || req.body.name=="" ||req.body.surname=="" ||req.body.password==""||req.body.repassword==""){
@@ -44,6 +67,7 @@ module.exports = function(app, swig, gestorBD, logger) {
             friends : [],
             invites : [],
         };
+        // Comprobamos que el email no esté ya registrado en el sistema
         comprobarEmailSinUso(req.body.email,function (usable) {
             if(usable){
                 gestorBD.insertarUsuario(usuario, function(id) {
@@ -67,6 +91,10 @@ module.exports = function(app, swig, gestorBD, logger) {
 
     });
 
+    /*
+     * Petición POST que identifica al usuario que la realiza,
+     * recibe un email y una contraseña.
+     */
     app.post("/identificarse", function(req, res) {
         logger.info("Usuario intenta identificarse");
         if(req.body.email=="" || req.body.password ==""){
@@ -97,6 +125,11 @@ module.exports = function(app, swig, gestorBD, logger) {
         });
     });
 
+    /*
+     * Petición GET que devuelve una lista de usuarios no administradores
+     * al usuario que la realiza. Tampoco se devuelve al propio usuario en
+     * sesión.
+     */
     app.get("/user/list", function (req, res) {
         logger.info("Usuario " + req.session.usuario.email + " intenta obtener la lista de usuarios del sistema");
         let criterio;
@@ -156,6 +189,10 @@ module.exports = function(app, swig, gestorBD, logger) {
         });
     });
 
+    /*
+     * Comprueba que el email que recibe como argumento
+     * no esté ya siendo utilizado por el sistema.
+     */
     function comprobarEmailSinUso(email,functionCallback){
         if(email == null){
             res.redirect("/registrarse"+ "?mensaje=Ha ocurrido un problema al insertar usuario: Email no valido"+
@@ -174,6 +211,13 @@ module.exports = function(app, swig, gestorBD, logger) {
         }
     }
 
+    /*
+     * Recibe una lista de usuarios y calcula la relación que
+     * tienen con el usuario en sesión. Estos estados pueden ser:
+     *  - Invited : Existe una invitación de amistad entre ambos usuarios
+     *  - Friend : Ambos usuarios son amigos
+     *  - Unknown : No existe un estado definido entre ambos usuarios
+     */
     function calculateOtherUserStatusesWithCurrentUser(usuarios, usuario){
         if(usuarios == null || usuario == null){
             return false;

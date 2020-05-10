@@ -1,4 +1,9 @@
 module.exports = function(app,gestorBD,logger) { 
+    /*
+     * Petición POST que autentica a un usuario.
+     *
+     * Recibe un email y una contraseña.
+     */
     app.post("/api/autenticar/", function(req, res) {
         let seguro = app.get("crypto").createHmac('sha256', app.get('clave')).update(req.body.password).digest('hex');
         let criterio = {
@@ -27,6 +32,11 @@ module.exports = function(app,gestorBD,logger) {
             }
         });
     });
+    /*
+     * Petición GET que devuelve una lista de 
+     * identificadores de los amigos del usuario
+     * que la solicita.
+     */
     app.get("/api/amigo", function(req, res) {
         let usuario = res.usuario;
         let criterio = { "email" : usuario };
@@ -45,10 +55,16 @@ module.exports = function(app,gestorBD,logger) {
             }
         });
     });
+    /*
+     * Petición GET que devuelve una lista de
+     * objetos representando a los amigos del
+     * usuario que la solicita.
+     */
     app.get("/api/amigo/list", function(req, res) {
         let usuario = res.usuario;
         let criterio = { "email" : usuario };
         logger.info("El usuario " + usuario + " realiza una petición para obtener sus amigos");
+        // Obtenemos el usuario en sesión
         gestorBD.obtenerUsuarios(criterio, function(usuarios) {
             if (usuarios == null) {
                 logger.info("La petición del usuario " + usuario + " para obtener sus amigos no se pudo realizar");
@@ -61,6 +77,11 @@ module.exports = function(app,gestorBD,logger) {
                     '_id': {$not: {$eq: gestorBD.mongo.ObjectID(usuarios[0]._id)}},
                     'rol': {$not: {$eq: "ADMINISTRADOR"}}
                 };
+                /*
+                 * Obtenemos todos los usuarios excepto:
+                 *  - Administradores
+                 *  - El usuario en sesión
+                 */
                 gestorBD.obtenerUsuarios(criterio_usuarios, function(other_users) {
                     if (other_users == null) {
                         logger.info("La petición del usuario " + usuario + " para obtener sus amigos no se pudo realizar");
@@ -69,6 +90,7 @@ module.exports = function(app,gestorBD,logger) {
                             error : "se ha producido un error"
                         });
                     } else {
+                        // Obtenemos los amigos del usuario que realiza la petición
                         let userFriends = [];
                         let pointer = 0;
                         for(i = 0; i < other_users.length; i++) {
@@ -85,10 +107,16 @@ module.exports = function(app,gestorBD,logger) {
             }
         });
     });
+    /*
+     * Petición GET que obtiene los mensajes del usuario
+     * que la realiza con el usuario cuya id recibe en forma
+     * de parámetro.
+     */
     app.get("/api/mensaje/:id", function(req, res) {
         let usuario = res.usuario;
         let criterio = { "email" : usuario };
         logger.info("El usuario " + usuario + " realiza una petición para obtener los mensajes de su amigo " + req.params.id);
+        // Obtenemos el usuario en sesión
         gestorBD.obtenerUsuarios(criterio, function(usuarios) {
             if (usuarios == null) {
                 logger.info("El usuario " + usuario + " no pudo obtener los mensajes de su amigo " + req.params.id);
@@ -101,6 +129,7 @@ module.exports = function(app,gestorBD,logger) {
                     { "emisor": gestorBD.mongo.ObjectID(usuarios[0]._id), "destino": gestorBD.mongo.ObjectID(req.params.id) }, 
                     { "emisor": gestorBD.mongo.ObjectID(req.params.id), "destino": gestorBD.mongo.ObjectID(usuarios[0]._id) } 
                 ] };
+                // Obtenemos los mensajes entre ambos usuarios
                 gestorBD.obtenerMensajes(criterio_mensaje, function(mensajes) {
                     if (mensajes == null) {
                         logger.info("El usuario " + usuario + " no pudo obtener los mensajes de su amigo " + req.params.id);
@@ -117,6 +146,12 @@ module.exports = function(app,gestorBD,logger) {
             }
         });
     });
+    /*
+     * Petición POST que crea un mensaje entre 
+     * el usuario que la realiza y el usuario cuya
+     * id viene dada en el cuerpo de la petición, representado
+     * por el campo "destino".
+     */
     app.post("/api/mensaje", function(req,res) { 
         let usuario = res.usuario;
         let criterio = { "email" : usuario };
@@ -135,6 +170,7 @@ module.exports = function(app,gestorBD,logger) {
                     texto : req.body.texto,
                     leido : false
                 }        
+                // Comprobamos que el mensaje sea correcto
                 validarMensaje(mensaje, function(valido, errores) {
                     if (valido) {
                         gestorBD.insertarMensaje(mensaje, function(id) { 
@@ -164,6 +200,13 @@ module.exports = function(app,gestorBD,logger) {
             }
         });
     });
+    /*
+     * Función que recibe un mensaje y comprueba 
+     * que todos sus campos sean correctos:
+     *  
+     *  - Los campos no pueden ser nulos o estar vacíos
+     *  - El usuario de destino debe existir
+     */
     function validarMensaje(mensaje, functionCallback) {
         let errores = [];
         if (mensaje.emisor == null || mensaje.emisor == "") {

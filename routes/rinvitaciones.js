@@ -1,4 +1,9 @@
 module.exports = function(app, swig, gestorBD, logger) {
+    /*
+     * Petición GET que tramita una petición de amistad
+     * entre el usuario cuya id es recibida como argumento
+     * y el usuario en sesión.
+     */
     app.get("/invitations/add/:id", function (req, res) {
         logger.info("Usuario " + req.session.usuario.email + " intenta crear una invitación de amistad");
         req.session.usuario.invites[req.session.usuario.invites.length] = req.params.id;
@@ -34,6 +39,10 @@ module.exports = function(app, swig, gestorBD, logger) {
             }
         })
     });
+    /*
+     * Petición GET que devuelve una lista con las peticiones 
+     * de amistad del usuario que la realiza.
+     */
     app.get("/invitation/list", function (req, res) {
         logger.info("Usuario " + req.session.usuario.email + " intenta obtener una lista de sus invitaciones de amistad");
         let criterio;

@@ -1,11 +1,13 @@
-module.exports = function(app, swig, gestorBD) {
+module.exports = function(app, swig, gestorBD, logger) {
     app.get("/invitations/add/:id", function (req, res) {
+        logger.info("Usuario " + req.session.usuario.email + " intenta crear una invitación de amistad");
         req.session.usuario.invites[req.session.usuario.invites.length] = req.params.id;
         let criterioBuscarInvitado = {
             "_id" : gestorBD.mongo.ObjectID(req.params.id)
         };
         gestorBD.obtenerUsuarios(criterioBuscarInvitado, function(usuarios) {
             if (usuarios == null) {
+                logger.info("Fallo al crear la invitación de amistad");
                 res.redirect("/home"+ "?mensaje=Ha ocurrido un problema al buscar al usuario invitado"+
                     "&tipoMensaje=alert-danger ");
             } else{
@@ -19,10 +21,12 @@ module.exports = function(app, swig, gestorBD) {
                 };
                 gestorBD.modificarUsuario(criterioInvitado, invitado, function(receiverUser) {
                     if(receiverUser == null){
+                        logger.info("Fallo al crear la invitación de amistad");
                         res.redirect("/home"+ "?mensaje=Ha ocurrido un problema tramitar invitacion"+
                             "&tipoMensaje=alert-danger ");
                     }
                     else{
+                        logger.info("El usuario " + req.session.usuario.email + " crea la invitación de amistad con éxito");
                         res.redirect("/user/list"+ "?mensaje=Se ha tramitado con exito su invitacion"+
                             "&tipoMensaje=alert-success");
                     }
@@ -31,6 +35,7 @@ module.exports = function(app, swig, gestorBD) {
         })
     });
     app.get("/invitation/list", function (req, res) {
+        logger.info("Usuario " + req.session.usuario.email + " intenta obtener una lista de sus invitaciones de amistad");
         let criterio;
         let invitesList = [];
         for(i= 0; i<req.session.usuario.invites.length; i++){
@@ -61,6 +66,7 @@ module.exports = function(app, swig, gestorBD) {
         }
         gestorBD.obtenerUsuariosPg(criterio, pg, function(usuarios,total) {
             if (usuarios == null) {
+                logger.info("Fallo al obtener la lista de invitaciones de amistad");
                 res.redirect("/home"+ "?mensaje=Ha ocurrido un problema al mostar sus invitaciones de amistad"+
                     "&tipoMensaje=alert-danger ");
             } else {
@@ -75,6 +81,7 @@ module.exports = function(app, swig, gestorBD) {
                     }
                 }
                 if(usuarios != null) {
+                    logger.info("El usuario " + req.session.usuario.email + " obtiene su lista de invitaciones de amistad con éxito"); 
                     let respuesta = swig.renderFile('views/binvitationslist.html', {
                         usuario: req.session.usuario,
                         usuarios: usuarios,
@@ -84,6 +91,7 @@ module.exports = function(app, swig, gestorBD) {
                     });
                     res.send(respuesta);
                 } else{
+                    logger.info("Fallo al obtener la lista de invitaciones de amistad");
                     res.redirect("/home"+ "?mensaje=Ha ocurrido un problema al mostar sus invitaciones de amistad"+
                         "&tipoMensaje=alert-danger ");
                 }

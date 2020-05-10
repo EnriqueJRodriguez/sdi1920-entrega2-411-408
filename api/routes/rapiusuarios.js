@@ -1,4 +1,4 @@
-module.exports = function(app,gestorBD) { 
+module.exports = function(app,gestorBD,logger) { 
     app.post("/api/autenticar/", function(req, res) {
         let seguro = app.get("crypto").createHmac('sha256', app.get('clave')).update(req.body.password).digest('hex');
         let criterio = {
@@ -7,6 +7,7 @@ module.exports = function(app,gestorBD) {
         }
         gestorBD.obtenerUsuarios(criterio, function(usuarios) {
             if (usuarios == null || usuarios.length == 0) {
+                logger.info("Usuario anónimo se autentica de forma incorrecta");
                 res.status(401); // Unauthorized
                 res.json({
                     autenticado : false,
@@ -17,6 +18,7 @@ module.exports = function(app,gestorBD) {
                     usuario : criterio.email,
                     tiempo : Date.now() / 1000
                 }, "secreto");
+                logger.info("Usuario " + criterio.email + " se autentica de forma correcta");
                 res.status(200);
                 res.json({
                     autenticado : true,
@@ -28,13 +30,16 @@ module.exports = function(app,gestorBD) {
     app.get("/api/amigo", function(req, res) {
         let usuario = res.usuario;
         let criterio = { "email" : usuario };
+        logger.info("El usuario " + usuario + " realiza una petición para obtener los identificadores de sus amigos");
         gestorBD.obtenerUsuarios(criterio, function(usuarios) {
             if (usuarios == null) {
+                logger.info("La petición del usuario " + usuario + " para obtener los ids de sus amigos no se pudo realizar");
                 res.status(500);
                 res.json({
                     error : "se ha producido un error"
                 });
             } else {
+                logger.info("La petición del usuario " + usuario + " para obtener los ids de sus amigos se realizó correctamente");
                 res.status(200);
                 res.send(JSON.stringify(usuarios[0].friends));
             }
@@ -43,8 +48,10 @@ module.exports = function(app,gestorBD) {
     app.get("/api/amigo/list", function(req, res) {
         let usuario = res.usuario;
         let criterio = { "email" : usuario };
+        logger.info("El usuario " + usuario + " realiza una petición para obtener sus amigos");
         gestorBD.obtenerUsuarios(criterio, function(usuarios) {
             if (usuarios == null) {
+                logger.info("La petición del usuario " + usuario + " para obtener sus amigos no se pudo realizar");
                 res.status(500);
                 res.json({
                     error : "se ha producido un error"
@@ -56,6 +63,7 @@ module.exports = function(app,gestorBD) {
                 };
                 gestorBD.obtenerUsuarios(criterio_usuarios, function(other_users) {
                     if (other_users == null) {
+                        logger.info("La petición del usuario " + usuario + " para obtener sus amigos no se pudo realizar");
                         res.status(500);
                         res.json({
                             error : "se ha producido un error"
@@ -69,6 +77,7 @@ module.exports = function(app,gestorBD) {
                                 pointer++;
                             }
                         }
+                        logger.info("La petición del usuario " + usuario + " para obtener sus amigos se realizó correctamente");
                         res.status(200);
                         res.send(JSON.stringify(userFriends));
                     }
@@ -79,8 +88,10 @@ module.exports = function(app,gestorBD) {
     app.get("/api/mensaje/:id", function(req, res) {
         let usuario = res.usuario;
         let criterio = { "email" : usuario };
+        logger.info("El usuario " + usuario + " realiza una petición para obtener los mensajes de su amigo " + req.params.id);
         gestorBD.obtenerUsuarios(criterio, function(usuarios) {
             if (usuarios == null) {
+                logger.info("El usuario " + usuario + " no pudo obtener los mensajes de su amigo " + req.params.id);
                 res.status(500);
                 res.json({
                     error : "se ha producido un error"
@@ -92,11 +103,13 @@ module.exports = function(app,gestorBD) {
                 ] };
                 gestorBD.obtenerMensajes(criterio_mensaje, function(mensajes) {
                     if (mensajes == null) {
+                        logger.info("El usuario " + usuario + " no pudo obtener los mensajes de su amigo " + req.params.id);
                         res.status(500);
                         res.json({
                             error : "se ha producido un error"
                         });
                     } else {
+                        logger.info("El usuario " + usuario + " pudo obtener los mensajes de su amigo " + req.params.id);
                         res.status(200);
                         res.send(JSON.stringify(mensajes));
                     }
@@ -107,8 +120,10 @@ module.exports = function(app,gestorBD) {
     app.post("/api/mensaje", function(req,res) { 
         let usuario = res.usuario;
         let criterio = { "email" : usuario };
+        logger.info("El usuario " + usuario + " crea un mensaje cuyo destino es su amigo " + req.body.destino);
         gestorBD.obtenerUsuarios(criterio, function(usuarios) {
             if (usuarios == null) {                
+                logger.info("El usuario " + usuario + " no pudo crear el mensaje para su amigo " + req.body.destino);
                 res.status(500);
                 res.json({
                     errores : [ "se ha producido un error" ]
@@ -124,12 +139,14 @@ module.exports = function(app,gestorBD) {
                     if (valido) {
                         gestorBD.insertarMensaje(mensaje, function(id) { 
                             if (id == null) { 
+                                logger.info("El usuario " + usuario + " no pudo crear el mensaje para su amigo " + req.body.destino);
                                 errores.push("Se ha producido un error al insertar el mensaje");
                                 res.status(500);                    
                                 res.json({
                                     errores : errores
                                 });
                             } else {
+                                logger.info("El usuario " + usuario + " pudo crear el mensaje para su amigo " + req.body.destino);
                                 res.status(201);
                                 res.json({ 
                                     mensaje : "mensaje insertado",

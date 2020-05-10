@@ -48,6 +48,7 @@ routerUsuarioToken.use(function(req, res, next) {
         // verificar el token
         jwt.verify(token, 'secreto', function(err, infoToken) {
             if (err || (Date.now()/1000 - infoToken.tiempo) > 240 ) {
+                logger.info("Usuario realiza petición a la API con token inválido o caducado");
                 res.status(403); // Forbidden
                 res.json({
                     acceso : false,
@@ -58,10 +59,12 @@ routerUsuarioToken.use(function(req, res, next) {
             } else {
                 // dejamos correr la petición
                 res.usuario = infoToken.usuario;
+                logger.info("Usuario " + res.usuario + " realiza petición con token correcto");
                 next();
             }
         });
     } else {
+        logger.info("Petición a la API enviada sin token");
         res.status(403); // Forbidden
         res.json({
             acceso : false,
@@ -80,6 +83,7 @@ let routerUsuarioSession = express.Router();
 routerUsuarioSession.use(function(req, res, next) {
     console.log("routerUsuarioSession");
     if ( req.session.usuario ) {
+        logger.info("Usuario " + req.session.usuario.email + " realiza una petición");
         // dejamos correr la petición
         next();
     } else {
@@ -95,20 +99,22 @@ app.use("/user/list",routerUsuarioSession);
 app.use("/invitation/list",routerUsuarioSession);
 app.use("/friend/list",routerUsuarioSession);
 
-// routerUsuarioSession
+// routerAdmin
 let routerAdmin = express.Router();
 routerAdmin.use(function(req, res, next) {
     console.log("routerUsuarioAdministrador");
     if ( req.session.usuario.rol == "ADMINISTRADOR" ) {
+        logger.info("Admin " + req.session.usuario.email + " realiza una petición");
         // dejamos correr la petición
         next();
     } else {
+        logger.info("Usuario " + req.session.usuario.email + " realiza una petición sin tener rol Administrador");
         console.log("va a : "+ req.session.destino)
         res.redirect("/identificarse");
     }
 });
 
-app.use("/eliminarTodo",routerAdmin);
+app.use("/eliminarTodo", routerAdmin);
 
 app.use(express.static('public'));
 app.use(express.static('public/img'));
@@ -120,10 +126,10 @@ app.set('clave','abcdefg');
 app.set('crypto',crypto);
 
 //Rutas/controladores por lógica
-require("./routes/rusuarios.js")(app,swig, gestorBD); // (app, param1, param2, etc.)
-require("./routes/rinvitaciones.js")(app,swig, gestorBD); // (app, param1, param2, etc.)
-require("./routes/ramigos.js")(app,swig, gestorBD); // (app, param1, param2, etc.)
-require("./api/routes/rapiusuarios.js")(app, gestorBD);
+require("./routes/rusuarios.js")(app,swig, gestorBD, logger); // (app, param1, param2, etc.)
+require("./routes/rinvitaciones.js")(app,swig, gestorBD, logger); // (app, param1, param2, etc.)
+require("./routes/ramigos.js")(app,swig, gestorBD, logger); // (app, param1, param2, etc.)
+require("./api/routes/rapiusuarios.js")(app, gestorBD, logger);
 
 app.get('/desconectarse', function (req, res) {
     req.session.usuario = null;

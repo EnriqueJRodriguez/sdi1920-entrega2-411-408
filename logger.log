@@ -1,0 +1,60 @@
+[2020-05-10T18:54:00.947] [INFO] logger - Usuario accede al index
+[2020-05-10T18:54:02.852] [INFO] logger - Usuario accede a la página de autenticación
+[2020-05-10T18:54:14.485] [INFO] logger - Usuario intenta identificarse
+[2020-05-10T18:54:15.021] [INFO] logger - Usuario identificado con éxito
+[2020-05-10T18:54:15.056] [INFO] logger - Usuario lysithea@tsundere.fe realiza una petición
+[2020-05-10T18:54:20.750] [INFO] logger - Usuario lysithea@tsundere.fe realiza una petición
+[2020-05-10T18:54:20.753] [INFO] logger - Usuario lysithea@tsundere.fe intenta obtener una lista de sus amigos
+[2020-05-10T18:54:21.189] [INFO] logger - El usuario lysithea@tsundere.fe obtiene su lista de amigos con éxito
+[2020-05-10T18:54:22.920] [INFO] logger - Usuario lysithea@tsundere.fe realiza una petición
+[2020-05-10T18:54:22.923] [INFO] logger - Usuario lysithea@tsundere.fe intenta obtener la lista de usuarios del sistema
+[2020-05-10T18:54:23.373] [INFO] logger - Usuario lysithea@tsundere.fe obtiene la lista de usuarios del sistema con éxito
+[2020-05-10T18:54:25.532] [INFO] logger - Usuario lysithea@tsundere.fe realiza una petición
+[2020-05-10T18:54:25.537] [INFO] logger - Usuario lysithea@tsundere.fe intenta obtener una lista de sus invitaciones de amistad
+[2020-05-10T18:54:26.035] [INFO] logger - El usuario lysithea@tsundere.fe obtiene su lista de invitaciones de amistad con éxito
+[2020-05-10T18:54:30.419] [INFO] logger - Usuario lysithea@tsundere.fe realiza una petición
+[2020-05-10T18:54:30.447] [INFO] logger - Usuario accede a la página de autenticación
+[2020-05-10T18:54:43.749] [INFO] logger - Usuario max@arcadia.bay se autentica de forma correcta
+[2020-05-10T18:54:43.852] [INFO] logger - Usuario max@arcadia.bay realiza petición con token correcto
+[2020-05-10T18:54:43.854] [INFO] logger - Usuario max@arcadia.bay realiza petición con token correcto
+[2020-05-10T18:54:43.856] [INFO] logger - El usuario max@arcadia.bay realiza una petición para obtener sus amigos
+[2020-05-10T18:54:44.618] [INFO] logger - La petición del usuario max@arcadia.bay para obtener sus amigos se realizó correctamente
+[2020-05-10T18:54:46.623] [INFO] logger - Usuario max@arcadia.bay realiza petición con token correcto
+[2020-05-10T18:54:46.625] [INFO] logger - El usuario max@arcadia.bay realiza una petición para obtener los mensajes de su amigo 5eb82712a12e5a0c015cd7a9
+[2020-05-10T18:54:47.405] [INFO] logger - El usuario max@arcadia.bay pudo obtener los mensajes de su amigo 5eb82712a12e5a0c015cd7a9
+[2020-05-10T18:54:47.628] [INFO] logger - Usuario max@arcadia.bay realiza petición con token correcto
+[2020-05-10T18:54:47.629] [INFO] logger - El usuario max@arcadia.bay realiza una petición para obtener los mensajes de su amigo 5eb82712a12e5a0c015cd7a9
+[2020-05-10T18:54:48.398] [INFO] logger - El usuario max@arcadia.bay pudo obtener los mensajes de su amigo 5eb82712a12e5a0c015cd7a9
+[2020-05-10T18:54:48.725] [INFO] logger - Usuario max@arcadia.bay realiza petición con token correcto
+[2020-05-10T18:54:48.727] [INFO] logger - El usuario max@arcadia.bay realiza una petición para obtener los mensajes de su amigo 5eb82712a12e5a0c015cd7a9
+[2020-05-10T18:54:49.490] [INFO] logger - El usuario max@arcadia.bay pudo obtener los mensajes de su amigo 5eb82712a12e5a0c015cd7a9
+[2020-05-10T18:54:49.626] [INFO] logger - Usuario max@arcadia.bay realiza petición con token correcto
+[2020-05-10T18:54:49.627] [INFO] logger - El usuario max@arcadia.bay realiza una petición para obtener los mensajes de su amigo 5eb82712a12e5a0c015cd7a9
+[2020-05-10T18:54:50.381] [INFO] logger - El usuario max@arcadia.bay pudo obtener los mensajes de su amigo 5eb82712a12e5a0c015cd7a9
+[2020-05-10T18:54:50.626] [INFO] logger - Usuario max@arcadia.bay realiza petición con token correcto
+[2020-05-10T18:54:50.631] [INFO] logger - El usuario max@arcadia.bay realiza una petición para obtener los mensajes de su amigo 5eb82712a12e5a0c015cd7a9
+[2020-05-10T18:54:51.396] [INFO] logger - El usuario max@arcadia.bay pudo obtener los mensajes de su amigo 5eb82712a12e5a0c015cd7a9
+[2020-05-10T18:54:51.584] [INFO] logger - Usuario max@arcadia.bay realiza petición con token correcto
+[2020-05-10T18:54:51.585] [INFO] logger - El usuario max@arcadia.bay crea un mensaje cuyo destino es su amigo 5eb82712a12e5a0c015cd7a9
+[2020-05-10T18:54:51.627] [INFO] logger - Usuario max@arcadia.bay realiza petición con token correcto
+[2020-05-10T18:54:51.629] [INFO] logger - El usuario max@arcadia.bay realiza una petición para obtener los mensajes de su amigo 5eb82712a12e5a0c015cd7a9
+[2020-05-10T18:54:52.388] [INFO] logger - El usuario max@arcadia.bay pudo obtener los mensajes de su amigo 5eb82712a12e5a0c015cd7a9
+[2020-05-10T18:54:52.627] [INFO] logger - Usuario max@arcadia.bay realiza petición con token correcto
+[2020-05-10T18:54:52.631] [INFO] logger - El usuario max@arcadia.bay realiza una petición para obtener los mensajes de su amigo 5eb82712a12e5a0c015cd7a9
+[2020-05-10T18:54:52.756] [INFO] logger - El usuario max@arcadia.bay pudo crear el mensaje para su amigo 5eb82712a12e5a0c015cd7a9
+[2020-05-10T18:54:53.386] [INFO] logger - El usuario max@arcadia.bay pudo obtener los mensajes de su amigo 5eb82712a12e5a0c015cd7a9
+[2020-05-10T18:54:53.624] [INFO] logger - Usuario max@arcadia.bay realiza petición con token correcto
+[2020-05-10T18:54:53.626] [INFO] logger - El usuario max@arcadia.bay realiza una petición para obtener los mensajes de su amigo 5eb82712a12e5a0c015cd7a9
+[2020-05-10T18:54:54.373] [INFO] logger - El usuario max@arcadia.bay pudo obtener los mensajes de su amigo 5eb82712a12e5a0c015cd7a9
+[2020-05-10T18:54:54.627] [INFO] logger - Usuario max@arcadia.bay realiza petición con token correcto
+[2020-05-10T18:54:54.629] [INFO] logger - El usuario max@arcadia.bay realiza una petición para obtener los mensajes de su amigo 5eb82712a12e5a0c015cd7a9
+[2020-05-10T18:54:55.380] [INFO] logger - El usuario max@arcadia.bay pudo obtener los mensajes de su amigo 5eb82712a12e5a0c015cd7a9
+[2020-05-10T18:54:55.627] [INFO] logger - Usuario max@arcadia.bay realiza petición con token correcto
+[2020-05-10T18:54:55.629] [INFO] logger - El usuario max@arcadia.bay realiza una petición para obtener los mensajes de su amigo 5eb82712a12e5a0c015cd7a9
+[2020-05-10T18:54:56.384] [INFO] logger - El usuario max@arcadia.bay pudo obtener los mensajes de su amigo 5eb82712a12e5a0c015cd7a9
+[2020-05-10T18:54:56.625] [INFO] logger - Usuario max@arcadia.bay realiza petición con token correcto
+[2020-05-10T18:54:56.627] [INFO] logger - El usuario max@arcadia.bay realiza una petición para obtener los mensajes de su amigo 5eb82712a12e5a0c015cd7a9
+[2020-05-10T18:54:57.366] [INFO] logger - El usuario max@arcadia.bay pudo obtener los mensajes de su amigo 5eb82712a12e5a0c015cd7a9
+[2020-05-10T18:54:57.626] [INFO] logger - Usuario max@arcadia.bay realiza petición con token correcto
+[2020-05-10T18:54:57.628] [INFO] logger - El usuario max@arcadia.bay realiza una petición para obtener los mensajes de su amigo 5eb82712a12e5a0c015cd7a9
+[2020-05-10T18:54:58.406] [INFO] logger - El usuario max@arcadia.bay pudo obtener los mensajes de su amigo 5eb82712a12e5a0c015cd7a9

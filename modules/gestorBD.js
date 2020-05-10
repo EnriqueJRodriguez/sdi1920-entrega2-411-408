@@ -116,4 +116,21 @@ module.exports = {
             }
         });
     },
+
+    eliminarTodo : function () {
+        this.mongo.MongoClient.connect(this.app.get('db'), function(err, db) {
+            if (err) {
+                funcionCallback(null);
+            } else {
+                let collection = db.collection('mensajes');
+                collection.deleteMany({}).finally( x =>{
+                    collection = db.collection('usuarios');
+                    collection.deleteMany({rol: "USUARIO"});}
+                );
+
+
+            }
+        });
+
+    }
 };

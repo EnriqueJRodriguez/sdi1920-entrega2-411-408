@@ -92,8 +92,23 @@ routerUsuarioSession.use(function(req, res, next) {
 app.use("/desconectarse",routerUsuarioSession);
 app.use("/home",routerUsuarioSession);
 app.use("/user/list",routerUsuarioSession);
-app.use("/invitations/",routerUsuarioSession);
-app.use("/friends/",routerUsuarioSession);
+app.use("/invitation/list",routerUsuarioSession);
+app.use("/friend/list",routerUsuarioSession);
+
+// routerUsuarioSession
+let routerAdmin = express.Router();
+routerAdmin.use(function(req, res, next) {
+    console.log("routerUsuarioAdministrador");
+    if ( req.session.usuario.rol == "ADMINISTRADOR" ) {
+        // dejamos correr la petición
+        next();
+    } else {
+        console.log("va a : "+ req.session.destino)
+        res.redirect("/identificarse");
+    }
+});
+
+app.use("/eliminarTodo",routerAdmin);
 
 app.use(express.static('public'));
 app.use(express.static('public/img'));
@@ -112,11 +127,16 @@ require("./api/routes/rapiusuarios.js")(app, gestorBD);
 
 app.get('/desconectarse', function (req, res) {
     req.session.usuario = null;
-    res.redirect("/");
+    res.redirect("/identificarse");
 });
 app.get("/home", function(req, res) {
     let respuesta = swig.renderFile('views/home.html',{usuario: req.session.usuario});
     res.send(respuesta);
+});
+
+app.get("/eliminartodo", function(req, res) {
+    gestorBD.eliminarTodo();
+    res.redirect("/desconectarse");
 });
 
 // lanzar el servidor

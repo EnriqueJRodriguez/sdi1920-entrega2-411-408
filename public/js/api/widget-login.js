@@ -16,7 +16,7 @@ $(document).ready(function() {
             },
             error : function(error) {
                 Cookies.remove('token');
-                $("#widget-login").prepend("<div class='alert alert-danger'>Usuario no encontrado</div>");
+                $("#widget-login").prepend("<div class='alert alert-danger'>Datos incorrectos</div>");
             }
         });
     });

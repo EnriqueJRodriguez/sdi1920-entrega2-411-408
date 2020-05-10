@@ -18,6 +18,9 @@ $(document).ready(function () {
     $("#div-errores").hide();
 });
 
+/*
+ * Carga el widget de amigos en el contenedor principal.
+ */
 function widgetAmigos() { 
     $("#contenedor-principal").load("widget-amigos.html");
 }

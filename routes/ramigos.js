@@ -1,5 +1,11 @@
-module.exports = function(app, swig, gestorBD) {
+module.exports = function(app, swig, gestorBD, logger) {
+    /*
+     * Petición GET que acepta una petición de amistad
+     * entre el usuario cuya id es recibida como argumento
+     * y el usuario en sesión.
+     */
     app.get("/friends/add/:id", function (req, res) {
+        logger.info("Usuario " + req.session.usuario.email + " intenta aceptar una invitación de amigo");
         req.session.usuario.friends[req.session.usuario.friends.length] = req.params.id;
         let newInvitesArray = req.session.usuario.invites.filter(function(e) { return e != req.params.id });
         req.session.usuario.invites = newInvitesArray;
@@ -11,6 +17,7 @@ module.exports = function(app, swig, gestorBD) {
         };
         gestorBD.obtenerUsuarios(criterioBuscarAmigo, function (usuarios) {
             if (usuarios == null) {
+                logger.info("No se pudo aceptar la petición de amigo");
                 res.redirect("/home" + "?mensaje=Ha ocurrido un problema al buscar al usuario invitador" +
                     "&tipoMensaje=alert-danger ");
             } else {
@@ -24,21 +31,24 @@ module.exports = function(app, swig, gestorBD) {
                 };
                 gestorBD.modificarUsuario(criterioAceptado, aceptado, function (receiverUser) {
                     if (receiverUser == null) {
+                        logger.info("No se pudo aceptar la petición de amigo");
                         res.redirect("/home" + "?mensaje=Ha ocurrido un problema tramitar invitacion" +
                             "&tipoMensaje=alert-danger ");
                     } else {
-                       let aceptador = {
-                           "friends" : req.session.usuario.friends,
-                           "invites" : req.session.usuario.invites
-                       }
-                       gestorBD.modificarUsuario(criterioAceptador, aceptador, function(accepterUser) {
-                           if (accepterUser == null) {
-                               res.redirect("/home" + "?mensaje=Ha ocurrido un problema tramitar invitacion" +
-                                   "&tipoMensaje=alert-danger ");
-                           }else{
-                               res.redirect("/invitation/list"+ "?mensaje=Se ha tramitado con exito su aceptación de amigo"+
-                                   "&tipoMensaje=alert-success");
-                           }
+                        let aceptador = {
+                            "friends" : req.session.usuario.friends,
+                            "invites" : req.session.usuario.invites
+                        }
+                        gestorBD.modificarUsuario(criterioAceptador, aceptador, function(accepterUser) {
+                            if (accepterUser == null) {
+                                logger.info("No se pudo aceptar la petición de amigo");
+                                res.redirect("/home" + "?mensaje=Ha ocurrido un problema tramitar invitacion" +
+                                    "&tipoMensaje=alert-danger ");
+                            }else{
+                                logger.info("El usuario " + req.session.usuario.email + " aceptó con exito la invitación de amistad");
+                                res.redirect("/invitation/list"+ "?mensaje=Se ha tramitado con exito su aceptación de amigo"+
+                                    "&tipoMensaje=alert-success");
+                            }
                         })
                     }
                 })
@@ -46,7 +56,12 @@ module.exports = function(app, swig, gestorBD) {
         })
     });
 
+    /*
+     * Petición GET que devuelve una lista con los amigos 
+     * del usuario que la realiza.
+     */
     app.get("/friend/list", function (req, res) {
+        logger.info("Usuario " + req.session.usuario.email + " intenta obtener una lista de sus amigos");
         let criterio;
         let friendsList = [];
         for(i= 0; i<req.session.usuario.friends.length; i++){
@@ -76,6 +91,7 @@ module.exports = function(app, swig, gestorBD) {
         }
         gestorBD.obtenerUsuariosPg(criterio, pg, function(usuarios,total) {
             if (usuarios == null) {
+                logger.info("No se pudo obtener la lista de amigos");
                 res.redirect("/home"+ "?mensaje=Ha ocurrido un problema al mostar sus amigos"+
                     "&tipoMensaje=alert-danger ");
             } else {
@@ -90,6 +106,7 @@ module.exports = function(app, swig, gestorBD) {
                     }
                 }
                 if(usuarios != null) {
+                    logger.info("El usuario " + req.session.usuario.email + " obtiene su lista de amigos con éxito");
                     let respuesta = swig.renderFile('views/bfriendslist.html', {
                         usuario: req.session.usuario,
                         usuarios: usuarios,
@@ -99,6 +116,7 @@ module.exports = function(app, swig, gestorBD) {
                     });
                     res.send(respuesta);
                 } else{
+                    logger.info("No se pudo obtener la lista de amigos");
                     res.redirect("/home"+ "?mensaje=Ha ocurrido un problema al mostar sus amigos"+
                         "&tipoMensaje=alert-danger ");
                 }
